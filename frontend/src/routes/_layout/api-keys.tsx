@@ -6,16 +6,16 @@ import {
   Table,
   Text,
   Badge,
-  Button,
-  IconButton,
 } from "@chakra-ui/react"
 import { useQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
-import { FiTrash2, FiPlus } from "react-icons/fi"
 
 import { ApiKeysService } from "@/client"
 import type { APIKeyPublic } from "@/client"
 import useCustomToast from "@/hooks/useCustomToast"
+
+import AddApiKey from "@/components/ApiKeys/AddApiKey"
+import DeleteApiKey from "@/components/ApiKeys/DeleteApiKey"
 
 const ApiKeysList = () => {
   const { showErrorToast } = useCustomToast()
@@ -42,10 +42,7 @@ const ApiKeysList = () => {
       </Heading>
 
       <Flex py={8} gap={4}>
-        <Button>
-          <FiPlus fontSize="16px" />
-          Add API Key
-        </Button>
+        <AddApiKey />
       </Flex>
 
       {isLoading ? (
@@ -89,14 +86,7 @@ const ApiKeysList = () => {
                       : "Never"}
                   </Table.Cell>
                   <Table.Cell>
-                    <IconButton
-                      size="sm"
-                      variant="outline"
-                      colorPalette="red"
-                      aria-label="Delete API key"
-                    >
-                      <FiTrash2 />
-                    </IconButton>
+                    <DeleteApiKey id={apiKey.id} name={apiKey.name} />
                   </Table.Cell>
                 </Table.Row>
               ))}

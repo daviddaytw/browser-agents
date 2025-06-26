@@ -21,8 +21,11 @@ import { Route as LayoutSettingsImport } from './routes/_layout/settings'
 import { Route as LayoutItemsImport } from './routes/_layout/items'
 import { Route as LayoutExecutionsImport } from './routes/_layout/executions'
 import { Route as LayoutApiKeysImport } from './routes/_layout/api-keys'
-import { Route as LayoutAgentsImport } from './routes/_layout/agents'
 import { Route as LayoutAdminImport } from './routes/_layout/admin'
+import { Route as LayoutAgentsIndexImport } from './routes/_layout/agents/index'
+import { Route as LayoutAgentsAgentIdIndexImport } from './routes/_layout/agents/$agentId/index'
+import { Route as LayoutAgentsAgentIdSettingsImport } from './routes/_layout/agents/$agentId/settings'
+import { Route as LayoutAgentsAgentIdExecutionsImport } from './routes/_layout/agents/$agentId/executions'
 
 // Create/Update Routes
 
@@ -76,15 +79,32 @@ const LayoutApiKeysRoute = LayoutApiKeysImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
-const LayoutAgentsRoute = LayoutAgentsImport.update({
-  path: '/agents',
-  getParentRoute: () => LayoutRoute,
-} as any)
-
 const LayoutAdminRoute = LayoutAdminImport.update({
   path: '/admin',
   getParentRoute: () => LayoutRoute,
 } as any)
+
+const LayoutAgentsIndexRoute = LayoutAgentsIndexImport.update({
+  path: '/agents/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutAgentsAgentIdIndexRoute = LayoutAgentsAgentIdIndexImport.update({
+  path: '/agents/$agentId/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutAgentsAgentIdSettingsRoute =
+  LayoutAgentsAgentIdSettingsImport.update({
+    path: '/agents/$agentId/settings',
+    getParentRoute: () => LayoutRoute,
+  } as any)
+
+const LayoutAgentsAgentIdExecutionsRoute =
+  LayoutAgentsAgentIdExecutionsImport.update({
+    path: '/agents/$agentId/executions',
+    getParentRoute: () => LayoutRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -114,10 +134,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutAdminImport
       parentRoute: typeof LayoutImport
     }
-    '/_layout/agents': {
-      preLoaderRoute: typeof LayoutAgentsImport
-      parentRoute: typeof LayoutImport
-    }
     '/_layout/api-keys': {
       preLoaderRoute: typeof LayoutApiKeysImport
       parentRoute: typeof LayoutImport
@@ -138,6 +154,22 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutIndexImport
       parentRoute: typeof LayoutImport
     }
+    '/_layout/agents/': {
+      preLoaderRoute: typeof LayoutAgentsIndexImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/agents/$agentId/executions': {
+      preLoaderRoute: typeof LayoutAgentsAgentIdExecutionsImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/agents/$agentId/settings': {
+      preLoaderRoute: typeof LayoutAgentsAgentIdSettingsImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/agents/$agentId/': {
+      preLoaderRoute: typeof LayoutAgentsAgentIdIndexImport
+      parentRoute: typeof LayoutImport
+    }
   }
 }
 
@@ -146,12 +178,15 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren([
   LayoutRoute.addChildren([
     LayoutAdminRoute,
-    LayoutAgentsRoute,
     LayoutApiKeysRoute,
     LayoutExecutionsRoute,
     LayoutItemsRoute,
     LayoutSettingsRoute,
     LayoutIndexRoute,
+    LayoutAgentsIndexRoute,
+    LayoutAgentsAgentIdExecutionsRoute,
+    LayoutAgentsAgentIdSettingsRoute,
+    LayoutAgentsAgentIdIndexRoute,
   ]),
   LoginRoute,
   RecoverPasswordRoute,

@@ -1,3 +1,4 @@
+import { createFileRoute } from "@tanstack/react-router"
 import {
   Box,
   Container,
@@ -6,20 +7,21 @@ import {
   Table,
   Text,
   Badge,
-  IconButton,
 } from "@chakra-ui/react"
 import { useQuery } from "@tanstack/react-query"
-import { FiPlay } from "react-icons/fi"
+import { Link } from "@tanstack/react-router"
 
 import { AgentsService } from "@/client"
 import type { AgentPublic } from "@/client"
 import useCustomToast from "@/hooks/useCustomToast"
 
-import AddAgent from "./AddAgent"
-import EditAgent from "./EditAgent"
-import DeleteAgent from "./DeleteAgent"
+import AddAgent from "@/components/Agents/AddAgent"
 
-const AgentsList = () => {
+export const Route = createFileRoute("/_layout/agents/")({
+  component: AgentsList,
+})
+
+function AgentsList() {
   const { showErrorToast } = useCustomToast()
 
   const {
@@ -62,46 +64,42 @@ const AgentsList = () => {
                   <Table.ColumnHeader>Model</Table.ColumnHeader>
                   <Table.ColumnHeader>Status</Table.ColumnHeader>
                   <Table.ColumnHeader>Created</Table.ColumnHeader>
-                  <Table.ColumnHeader>Actions</Table.ColumnHeader>
                 </Table.Row>
               </Table.Header>
               <Table.Body>
                 {agents?.data?.map((agent: AgentPublic) => (
-                  <Table.Row key={agent.id}>
-                    <Table.Cell fontWeight="bold">{agent.name}</Table.Cell>
-                    <Table.Cell>
-                      <Text truncate maxW="200px">
-                        {agent.description || "No description"}
-                      </Text>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <Badge variant="outline">{agent.llm_model}</Badge>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <Badge
-                        colorPalette={agent.is_active ? "green" : "red"}
-                        variant="subtle"
-                      >
-                        {agent.is_active ? "Active" : "Inactive"}
-                      </Badge>
-                    </Table.Cell>
-                    <Table.Cell>
-                      {new Date(agent.created_at).toLocaleDateString()}
-                    </Table.Cell>
-                    <Table.Cell>
-                      <Flex gap={2}>
-                        <IconButton
-                          size="sm"
-                          variant="outline"
-                          aria-label="Test agent"
+                  <Link 
+                    key={agent.id} 
+                    to="/agents/$agentId" 
+                    params={{ agentId: agent.id }}
+                    style={{ display: "contents" }}
+                  >
+                    <Table.Row 
+                      _hover={{ bg: "gray.50" }}
+                      cursor="pointer"
+                    >
+                      <Table.Cell fontWeight="bold">{agent.name}</Table.Cell>
+                      <Table.Cell>
+                        <Text truncate maxW="200px">
+                          {agent.description || "No description"}
+                        </Text>
+                      </Table.Cell>
+                      <Table.Cell>
+                        <Badge variant="outline">{agent.llm_model}</Badge>
+                      </Table.Cell>
+                      <Table.Cell>
+                        <Badge
+                          colorPalette={agent.is_active ? "green" : "red"}
+                          variant="subtle"
                         >
-                          <FiPlay />
-                        </IconButton>
-                        <EditAgent agent={agent} />
-                        <DeleteAgent id={agent.id} />
-                      </Flex>
-                    </Table.Cell>
-                  </Table.Row>
+                          {agent.is_active ? "Active" : "Inactive"}
+                        </Badge>
+                      </Table.Cell>
+                      <Table.Cell>
+                        {new Date(agent.created_at).toLocaleDateString()}
+                      </Table.Cell>
+                    </Table.Row>
+                  </Link>
                 ))}
               </Table.Body>
             </Table.Root>
@@ -119,5 +117,3 @@ const AgentsList = () => {
     </>
   )
 }
-
-export default AgentsList
