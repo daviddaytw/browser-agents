@@ -8,8 +8,6 @@ import {
   Input,
   Text,
   VStack,
-  Textarea,
-  HStack,
 } from "@chakra-ui/react"
 import { useState } from "react"
 import { FiPlus } from "react-icons/fi"
@@ -92,7 +90,7 @@ const AddAgent = () => {
             <DialogTitle>Add Agent</DialogTitle>
           </DialogHeader>
           <DialogBody>
-            <Text mb={4}>Fill in the details to create a new browser agent.</Text>
+            <Text mb={4}>Enter a name for the new agent.</Text>
             <VStack gap={4}>
               <Field
                 required
@@ -108,78 +106,6 @@ const AddAgent = () => {
                   placeholder="Agent name"
                   type="text"
                 />
-              </Field>
-
-              <Field
-                invalid={!!errors.description}
-                errorText={errors.description?.message}
-                label="Description"
-              >
-                <Input
-                  id="description"
-                  {...register("description")}
-                  placeholder="Brief description of what this agent does"
-                  type="text"
-                />
-              </Field>
-
-              <Field
-                required
-                invalid={!!errors.task_prompt}
-                errorText={errors.task_prompt?.message}
-                label="Task Prompt"
-              >
-                <Textarea
-                  id="task_prompt"
-                  {...register("task_prompt", {
-                    required: "Task prompt is required.",
-                  })}
-                  placeholder="Describe what you want the agent to do..."
-                  rows={4}
-                />
-              </Field>
-
-              <Field
-                required
-                invalid={!!errors.llm_model}
-                errorText={errors.llm_model?.message}
-                label="LLM Model"
-              >
-                <select
-                  {...register("llm_model", {
-                    required: "Model is required.",
-                  })}
-                  defaultValue="gpt-4o"
-                  style={{
-                    width: "100%",
-                    padding: "8px 12px",
-                    border: "1px solid #e2e8f0",
-                    borderRadius: "6px",
-                    fontSize: "14px",
-                    backgroundColor: "white",
-                  }}
-                >
-                  <option value="gpt-4o">GPT-4o</option>
-                  <option value="gpt-4o-mini">GPT-4o Mini</option>
-                  <option value="claude-3-5-sonnet-20241022">Claude 3.5 Sonnet</option>
-                  <option value="claude-3-5-haiku-20241022">Claude 3.5 Haiku</option>
-                </select>
-              </Field>
-
-              <Field label="Active">
-                <HStack>
-                  <input
-                    type="checkbox"
-                    {...register("is_active")}
-                    defaultChecked={true}
-                    style={{
-                      width: "16px",
-                      height: "16px",
-                      accentColor: "#3182ce",
-                    }}
-                  />
-                  <Text fontSize="sm">Agent is active and can be executed</Text>
-                </HStack>
               </Field>
             </VStack>
           </DialogBody>
