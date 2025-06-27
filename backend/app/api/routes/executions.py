@@ -118,6 +118,7 @@ def create_execution(
     Create new execution for an agent.
     """
     from datetime import datetime
+    from app.services.agent_executor import agent_executor
     
     # Check if user owns the agent
     agent = session.get(Agent, agent_id)
@@ -130,8 +131,12 @@ def create_execution(
     if not agent.is_active:
         raise HTTPException(status_code=400, detail="Agent is not active")
     
+    # Extract sensitive_data from execution_in and don't store it in the database
+    sensitive_data = execution_in.sensitive_data
+    execution_data = execution_in.model_dump(exclude={"sensitive_data"})
+    
     execution = AgentExecution.model_validate(
-        execution_in,
+        execution_data,
         update={
             "agent_id": agent_id,
             "started_at": datetime.utcnow(),
@@ -141,6 +146,16 @@ def create_execution(
     session.add(execution)
     session.commit()
     session.refresh(execution)
+    
+    # Start the execution with sensitive data passed as parameter
+    agent_executor.start_execution(
+        execution.id,
+        agent,
+        execution_in.task_input,
+        execution_in.parameters,
+        sensitive_data
+    )
+    
     return execution
 
 

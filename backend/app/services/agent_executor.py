@@ -85,9 +85,6 @@ class AgentExecutorService:
         if "extend_planner_system_message" in settings:
             kwargs["extend_planner_system_message"] = settings["extend_planner_system_message"]
         
-        # Sensitive data handling
-        if "sensitive_data" in settings:
-            kwargs["sensitive_data"] = settings["sensitive_data"]
         
         # Browser session settings
         browser_settings = agent.browser_settings
@@ -226,7 +223,8 @@ class AgentExecutorService:
         execution_id: uuid.UUID,
         agent: Agent,
         task_input: Optional[str] = None,
-        parameters: Optional[Dict[str, Any]] = None
+        parameters: Optional[Dict[str, Any]] = None,
+        sensitive_data: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """Execute a browser agent and return the result."""
         
@@ -254,6 +252,10 @@ class AgentExecutorService:
                 
                 # Prepare agent settings
                 agent_kwargs = self._prepare_agent_kwargs(agent, llm, task)
+                
+                # Add sensitive data from execution parameters
+                if sensitive_data:
+                    agent_kwargs["sensitive_data"] = sensitive_data
                 
                 # Create browser agent
                 browser_agent = BrowserAgent(**agent_kwargs)
@@ -314,11 +316,12 @@ class AgentExecutorService:
         execution_id: uuid.UUID,
         agent: Agent,
         task_input: Optional[str] = None,
-        parameters: Optional[Dict[str, Any]] = None
+        parameters: Optional[Dict[str, Any]] = None,
+        sensitive_data: Optional[Dict[str, Any]] = None
     ) -> asyncio.Task:
         """Start agent execution in background."""
         task = asyncio.create_task(
-            self.execute_agent(execution_id, agent, task_input, parameters)
+            self.execute_agent(execution_id, agent, task_input, parameters, sensitive_data)
         )
         self.running_executions[str(execution_id)] = task
         

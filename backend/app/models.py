@@ -167,6 +167,7 @@ class AgentExecutionBase(SQLModel):
 class AgentExecutionCreate(SQLModel):
     task_input: str | None = Field(default=None)
     parameters: Dict[str, Any] = Field(default_factory=dict)
+    sensitive_data: Dict[str, Any] | None = Field(default=None)
 
 
 class AgentExecution(AgentExecutionBase, table=True):

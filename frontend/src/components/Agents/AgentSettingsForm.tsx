@@ -283,21 +283,6 @@ const AgentSettingsForm: React.FC<AgentSettingsFormProps> = ({
                 />
               </Field>
 
-              <Field label="Sensitive Data (JSON)">
-                <Textarea
-                  placeholder='{"https://example.com": {"x_username": "user", "x_password": "pass"}}'
-                  value={agentSettings.sensitive_data ? JSON.stringify(agentSettings.sensitive_data, null, 2) : ""}
-                  onChange={(e) => {
-                    try {
-                      const parsed = e.target.value ? JSON.parse(e.target.value) : {}
-                      updateAgentSettings("sensitive_data", parsed)
-                    } catch {
-                      // Invalid JSON, keep the text for user to fix
-                    }
-                  }}
-                  rows={4}
-                />
-              </Field>
             </VStack>
           </Box>
         )}
