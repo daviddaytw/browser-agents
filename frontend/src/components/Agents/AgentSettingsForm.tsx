@@ -78,14 +78,6 @@ const AgentSettingsForm: React.FC<AgentSettingsFormProps> = ({
         {activeSection === "llm" && (
           <Box p={4} borderTop="1px" borderColor="gray.200">
             <VStack gap={4} align="stretch">
-              <Field label="API Key">
-                <Input
-                  type="password"
-                  placeholder="Your API key"
-                  value={llmConfig.api_key || ""}
-                  onChange={(e) => updateLlmConfig("api_key", e.target.value)}
-                />
-              </Field>
 
               <Field label="Temperature">
                 <Input
@@ -108,16 +100,6 @@ const AgentSettingsForm: React.FC<AgentSettingsFormProps> = ({
                   onChange={(e) => updateLlmConfig("max_tokens", e.target.value ? parseInt(e.target.value) : undefined)}
                 />
               </Field>
-
-              {(llmModel.startsWith("gpt-") || llmModel.includes("ollama")) && (
-                <Field label="Base URL">
-                  <Input
-                    placeholder="Custom base URL (optional)"
-                    value={llmConfig.base_url || ""}
-                    onChange={(e) => updateLlmConfig("base_url", e.target.value)}
-                  />
-                </Field>
-              )}
             </VStack>
           </Box>
         )}
@@ -129,119 +111,6 @@ const AgentSettingsForm: React.FC<AgentSettingsFormProps> = ({
         {activeSection === "browser" && (
           <Box p={4} borderTop="1px" borderColor="gray.200">
             <VStack gap={4} align="stretch">
-              <Text fontSize="sm" color="gray.600">
-                Configure browser connection and behavior settings.
-              </Text>
-
-              {/* Connection Settings */}
-              <Text fontWeight="semibold" fontSize="sm">Connection Settings</Text>
-              
-              <Field label="CDP URL">
-                <Input
-                  placeholder="http://localhost:9222 (Chrome DevTools Protocol)"
-                  value={browserSettings.cdp_url || ""}
-                  onChange={(e) => updateBrowserSettings("cdp_url", e.target.value)}
-                />
-              </Field>
-
-              <Field label="WebSocket URL">
-                <Input
-                  placeholder="wss://... (Playwright server WebSocket)"
-                  value={browserSettings.wss_url || ""}
-                  onChange={(e) => updateBrowserSettings("wss_url", e.target.value)}
-                />
-              </Field>
-
-              <Field label="Browser PID">
-                <Input
-                  type="number"
-                  placeholder="Process ID of running browser"
-                  value={browserSettings.browser_pid || ""}
-                  onChange={(e) => updateBrowserSettings("browser_pid", e.target.value ? parseInt(e.target.value) : undefined)}
-                />
-              </Field>
-
-              <Field label="Executable Path">
-                <Input
-                  placeholder="/path/to/chrome or /path/to/chromium"
-                  value={browserSettings.executable_path || ""}
-                  onChange={(e) => updateBrowserSettings("executable_path", e.target.value)}
-                />
-              </Field>
-
-              <Field label="Browser Channel">
-                <select
-                  value={browserSettings.channel || ""}
-                  onChange={(e) => updateBrowserSettings("channel", e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: "8px 12px",
-                    border: "1px solid #e2e8f0",
-                    borderRadius: "6px",
-                    fontSize: "14px",
-                    backgroundColor: "white",
-                  }}
-                >
-                  <option value="">Default</option>
-                  <option value="chrome">Chrome</option>
-                  <option value="chromium">Chromium</option>
-                  <option value="chrome-beta">Chrome Beta</option>
-                  <option value="chrome-dev">Chrome Dev</option>
-                  <option value="msedge">Microsoft Edge</option>
-                  <option value="msedge-beta">Edge Beta</option>
-                </select>
-              </Field>
-
-              {/* Browser-Use Specific Settings */}
-              <Text fontWeight="semibold" fontSize="sm">Browser-Use Settings</Text>
-
-              <HStack justify="space-between">
-                <Text>Headless Mode</Text>
-                <Checkbox
-                  checked={browserSettings.headless !== false}
-                  onCheckedChange={(checked) => updateBrowserSettings("headless", checked)}
-                />
-              </HStack>
-
-              <HStack justify="space-between">
-                <Text>Stealth Mode</Text>
-                <Checkbox
-                  checked={browserSettings.stealth || false}
-                  onCheckedChange={(checked) => updateBrowserSettings("stealth", checked)}
-                />
-              </HStack>
-
-              <HStack justify="space-between">
-                <Text>Keep Alive</Text>
-                <Checkbox
-                  checked={browserSettings.keep_alive || false}
-                  onCheckedChange={(checked) => updateBrowserSettings("keep_alive", checked)}
-                />
-              </HStack>
-
-              <Field label="Allowed Domains (comma-separated)">
-                <Input
-                  placeholder="*.google.com, https://example.com"
-                  value={browserSettings.allowed_domains ? browserSettings.allowed_domains.join(", ") : ""}
-                  onChange={(e) => updateBrowserSettings("allowed_domains", e.target.value ? e.target.value.split(",").map(d => d.trim()) : [])}
-                />
-              </Field>
-
-              <Field label="User Data Directory">
-                <Input
-                  placeholder="~/.config/browseruse/profiles/default"
-                  value={browserSettings.user_data_dir || ""}
-                  onChange={(e) => updateBrowserSettings("user_data_dir", e.target.value)}
-                />
-              </Field>
-
-              <Field label="Storage State Path">
-                <Input
-                  placeholder="path/to/storage_state.json"
-                  value={browserSettings.storage_state || ""}
-                  onChange={(e) => updateBrowserSettings("storage_state", e.target.value)}
-                />
-              </Field>
 
               {/* Viewport Settings */}
               <Text fontWeight="semibold" fontSize="sm">Viewport Settings</Text>
@@ -377,14 +246,6 @@ const AgentSettingsForm: React.FC<AgentSettingsFormProps> = ({
               <Text fontSize="xs" color="gray.500">
                 Enable vision capabilities for processing visual information from web pages
               </Text>
-
-              <Field label="Save Conversation Path">
-                <Input
-                  placeholder="/path/to/save/conversation/logs"
-                  value={agentSettings.save_conversation_path || ""}
-                  onChange={(e) => updateAgentSettings("save_conversation_path", e.target.value)}
-                />
-              </Field>
 
               <Field label="Override System Message">
                 <Textarea
