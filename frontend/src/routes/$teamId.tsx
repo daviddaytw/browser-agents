@@ -5,7 +5,7 @@ import Navbar from "@/components/Common/Navbar"
 import Sidebar from "@/components/Common/Sidebar"
 import { isLoggedIn } from "@/hooks/useAuth"
 
-export const Route = createFileRoute("/_layout")({
+export const Route = createFileRoute("/$teamId")({
   component: Layout,
   beforeLoad: async () => {
     if (!isLoggedIn()) {

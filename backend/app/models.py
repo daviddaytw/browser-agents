@@ -45,8 +45,8 @@ class UpdatePassword(SQLModel):
 class User(UserBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     hashed_password: str
-    agents: list["Agent"] = Relationship(back_populates="owner", cascade_delete=True)
     api_keys: list["APIKey"] = Relationship(back_populates="owner", cascade_delete=True)
+    team_memberships: list["TeamMember"] = Relationship(back_populates="user", cascade_delete=True)
 
 
 # Properties to return via API, id is always required
@@ -59,54 +59,173 @@ class UsersPublic(SQLModel):
     count: int
 
 
+# Team Models
+class TeamBase(SQLModel):
+    name: str = Field(min_length=1, max_length=255)
+    description: str | None = Field(default=None, max_length=1000)
+    is_active: bool = Field(default=True)
+
+
+class TeamCreate(TeamBase):
+    pass
+
+
+class TeamUpdate(TeamBase):
+    name: str | None = Field(default=None, min_length=1, max_length=255)
+    description: str | None = Field(default=None, max_length=1000)
+    is_active: bool | None = Field(default=None)
+
+
+class Team(TeamBase, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    
+    # Relationships
+    members: list["TeamMember"] = Relationship(back_populates="team", cascade_delete=True)
+    agents: list["Agent"] = Relationship(back_populates="team", cascade_delete=True)
+
+
+class TeamPublic(TeamBase):
+    id: uuid.UUID
+    created_at: datetime
+    updated_at: datetime
+
+
+class TeamsPublic(SQLModel):
+    data: list[TeamPublic]
+    count: int
+
+
+# Team Member Models (Many-to-Many relationship between User and Team)
+class TeamMemberBase(SQLModel):
+    role: str = Field(max_length=50, default="member")  # member, admin, owner
+
+
+class TeamMemberCreate(SQLModel):
+    user_id: uuid.UUID
+    role: str = Field(max_length=50, default="member")
+
+
+class TeamMemberUpdate(SQLModel):
+    role: str | None = Field(default=None, max_length=50)
+
+
+class TeamMember(TeamMemberBase, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False, ondelete="CASCADE")
+    team_id: uuid.UUID = Field(foreign_key="team.id", nullable=False, ondelete="CASCADE")
+    joined_at: datetime = Field(default_factory=datetime.utcnow)
+    
+    # Relationships
+    user: User | None = Relationship(back_populates="team_memberships")
+    team: Team | None = Relationship(back_populates="members")
+
+
+class TeamMemberPublic(TeamMemberBase):
+    id: uuid.UUID
+    user_id: uuid.UUID
+    team_id: uuid.UUID
+    joined_at: datetime
+
+
+class TeamMembersPublic(SQLModel):
+    data: list[TeamMemberPublic]
+    count: int
+
+
 # Agent Models
 class AgentBase(SQLModel):
     name: str = Field(min_length=1, max_length=255)
     description: str | None = Field(default=None, max_length=1000)
-    task_prompt: str = Field(min_length=1, sa_column=Column(Text))
-    llm_model: str = Field(max_length=100, default="gpt-4o")
-    llm_config: Dict[str, Any] = Field(default_factory=dict, sa_column=Column(JSON))
-    browser_settings: Dict[str, Any] = Field(default_factory=dict, sa_column=Column(JSON))
-    agent_settings: Dict[str, Any] = Field(default_factory=dict, sa_column=Column(JSON))
     is_active: bool = Field(default=True)
 
 
 class AgentCreate(AgentBase):
-    pass
+    team_id: uuid.UUID
+    initial_config: "AgentConfigurationCreate"
 
 
 class AgentUpdate(AgentBase):
     name: str | None = Field(default=None, min_length=1, max_length=255)
     description: str | None = Field(default=None, max_length=1000)
-    task_prompt: str | None = Field(default=None, min_length=1)
-    llm_model: str | None = Field(default=None, max_length=100)
-    llm_config: Dict[str, Any] | None = Field(default=None)
-    browser_settings: Dict[str, Any] | None = Field(default=None)
-    agent_settings: Dict[str, Any] | None = Field(default=None)
     is_active: bool | None = Field(default=None)
 
 
 class Agent(AgentBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    owner_id: uuid.UUID = Field(foreign_key="user.id", nullable=False, ondelete="CASCADE")
+    team_id: uuid.UUID = Field(foreign_key="team.id", nullable=False, ondelete="CASCADE")
+    created_by: uuid.UUID = Field(foreign_key="user.id", nullable=False)
+    current_config_version: int = Field(default=1)
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
     
     # Relationships
-    owner: User | None = Relationship(back_populates="agents")
+    team: Team | None = Relationship(back_populates="agents")
+    creator: User | None = Relationship()
+    configurations: list["AgentConfiguration"] = Relationship(back_populates="agent", cascade_delete=True)
     executions: list["AgentExecution"] = Relationship(back_populates="agent", cascade_delete=True)
     webhooks: list["AgentWebhook"] = Relationship(back_populates="agent", cascade_delete=True)
 
 
 class AgentPublic(AgentBase):
     id: uuid.UUID
-    owner_id: uuid.UUID
+    team_id: uuid.UUID
+    created_by: uuid.UUID
+    current_config_version: int
     created_at: datetime
     updated_at: datetime
 
 
 class AgentsPublic(SQLModel):
     data: list[AgentPublic]
+    count: int
+
+
+# Agent Configuration Version Models
+class AgentConfigurationBase(SQLModel):
+    version: int = Field(ge=1)
+    task_prompt: str = Field(min_length=1, sa_column=Column(Text))
+    llm_model: str = Field(max_length=100, default="gpt-4o")
+    llm_config: Dict[str, Any] = Field(default_factory=dict, sa_column=Column(JSON))
+    browser_settings: Dict[str, Any] = Field(default_factory=dict, sa_column=Column(JSON))
+    agent_settings: Dict[str, Any] = Field(default_factory=dict, sa_column=Column(JSON))
+    change_description: str | None = Field(default=None, max_length=1000)
+    is_current: bool = Field(default=False)
+
+
+class AgentConfigurationCreate(SQLModel):
+    task_prompt: str = Field(min_length=1)
+    llm_model: str = Field(max_length=100, default="gpt-4o")
+    llm_config: Dict[str, Any] = Field(default_factory=dict)
+    browser_settings: Dict[str, Any] = Field(default_factory=dict)
+    agent_settings: Dict[str, Any] = Field(default_factory=dict)
+    change_description: str | None = Field(default=None, max_length=1000)
+
+
+# AgentConfigurationUpdate removed - configurations are immutable
+
+
+class AgentConfiguration(AgentConfigurationBase, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    agent_id: uuid.UUID = Field(foreign_key="agent.id", nullable=False, ondelete="CASCADE")
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_by: uuid.UUID = Field(foreign_key="user.id", nullable=False)
+    
+    # Relationships
+    agent: Agent | None = Relationship(back_populates="configurations")
+    creator: User | None = Relationship()
+
+
+class AgentConfigurationPublic(AgentConfigurationBase):
+    id: uuid.UUID
+    agent_id: uuid.UUID
+    created_at: datetime
+    created_by: uuid.UUID
+
+
+class AgentConfigurationsPublic(SQLModel):
+    data: list[AgentConfigurationPublic]
     count: int
 
 
@@ -162,6 +281,7 @@ class AgentExecutionBase(SQLModel):
     result: Dict[str, Any] | None = Field(default=None, sa_column=Column(JSON))
     execution_history: List[Dict[str, Any]] = Field(default_factory=list, sa_column=Column(JSON))
     error_message: str | None = Field(default=None, sa_column=Column(Text))
+    config_version_used: int = Field(ge=1)  # Track which configuration version was used
 
 
 class AgentExecutionCreate(SQLModel):
@@ -173,16 +293,22 @@ class AgentExecutionCreate(SQLModel):
 class AgentExecution(AgentExecutionBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     agent_id: uuid.UUID = Field(foreign_key="agent.id", nullable=False, ondelete="CASCADE")
+    config_id: uuid.UUID = Field(foreign_key="agentconfiguration.id", nullable=False)  # Reference to exact config used
+    started_by: uuid.UUID = Field(foreign_key="user.id", nullable=False)
     started_at: datetime = Field(default_factory=datetime.utcnow)
     completed_at: datetime | None = Field(default=None)
     
     # Relationships
     agent: Agent | None = Relationship(back_populates="executions")
+    configuration: "AgentConfiguration | None" = Relationship()
+    starter: User | None = Relationship()
 
 
 class AgentExecutionPublic(AgentExecutionBase):
     id: uuid.UUID
     agent_id: uuid.UUID
+    config_id: uuid.UUID
+    started_by: uuid.UUID
     started_at: datetime
     completed_at: datetime | None
 

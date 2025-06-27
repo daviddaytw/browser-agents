@@ -10,15 +10,16 @@ import {
   Button,
 } from "@chakra-ui/react"
 import { useQuery } from "@tanstack/react-query"
-import { createFileRoute, Link } from "@tanstack/react-router"
+import { createFileRoute, Link, useParams } from "@tanstack/react-router"
 import { FiCpu, FiPlay, FiKey, FiPlus } from "react-icons/fi"
 
 import { AgentsService, ExecutionsService, ApiKeysService } from "@/client"
 
 const Dashboard = () => {
+  const { teamId } = useParams({ from: "/_layout/$teamId/" })
   const { data: agents } = useQuery({
-    queryKey: ["agents"],
-    queryFn: () => AgentsService.readAgents({ limit: 5 }),
+    queryKey: ["agents", teamId],
+    queryFn: () => AgentsService.readAgents({ limit: 5, teamId }),
   })
 
   const { data: executions } = useQuery({
@@ -59,7 +60,7 @@ const Dashboard = () => {
             <Text color="gray.500" mb={4}>
               Active browser automation agents
             </Text>
-            <Link to="/agents">
+            <Link to="/$teamId/agents" params={{ teamId }}>
               <Button size="sm" variant="outline" width="full">
                 <FiPlus size={16} />
                 Manage Agents
@@ -86,7 +87,7 @@ const Dashboard = () => {
             <Text color="gray.500" mb={4}>
               Total agent executions
             </Text>
-            <Link to="/executions">
+            <Link to="/$teamId/executions" params={{ teamId }}>
               <Button size="sm" variant="outline" width="full">
                 View History
               </Button>
@@ -112,7 +113,7 @@ const Dashboard = () => {
             <Text color="gray.500" mb={4}>
               Active API keys for automation
             </Text>
-            <Link to="/api-keys">
+            <Link to="/$teamId/api-keys" params={{ teamId }}>
               <Button size="sm" variant="outline" width="full">
                 Manage Keys
               </Button>
@@ -144,7 +145,7 @@ const Dashboard = () => {
                     {agent.description || "No description"}
                   </Text>
                   <Badge variant="outline" size="sm">
-                    {agent.llm_model}
+                    Version {agent.current_config_version}
                   </Badge>
                 </Card.Body>
               </Card.Root>
@@ -156,7 +157,7 @@ const Dashboard = () => {
               <Text color="gray.500" mb={4}>
                 No agents created yet
               </Text>
-              <Link to="/agents">
+              <Link to="/$teamId/agents" params={{ teamId }}>
                 <Button>
                   <FiPlus size={16} />
                   Create Your First Agent
@@ -170,6 +171,6 @@ const Dashboard = () => {
   )
 }
 
-export const Route = createFileRoute("/_layout/")({
+export const Route = createFileRoute("/$teamId/")({
   component: Dashboard,
 })

@@ -114,6 +114,6 @@ const ExecutionsList = () => {
   )
 }
 
-export const Route = createFileRoute("/_layout/executions")({
+export const Route = createFileRoute("/$teamId/executions")({
   component: ExecutionsList,
 })

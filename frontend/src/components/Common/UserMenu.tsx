@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Text } from "@chakra-ui/react"
 import { Link } from "@tanstack/react-router"
 import { FaUserAstronaut } from "react-icons/fa"
-import { FiBook, FiLogOut, FiUser } from "react-icons/fi"
+import { FiLogOut, FiUser, FiUsers } from "react-icons/fi"
 
 import useAuth from "@/hooks/useAuth"
 import { MenuContent, MenuItem, MenuRoot, MenuTrigger } from "../ui/menu"
@@ -39,16 +39,18 @@ const UserMenu = () => {
               </MenuItem>
             </Link>
 
-            <MenuItem
-              value="api-docs"
-              gap={2}
-              py={2}
-              onClick={() => window.open('/api/docs', '_blank')}
-              style={{ cursor: "pointer" }}
-            >
-              <FiBook fontSize="18px" />
-              <Box flex="1">API Documentation</Box>
-            </MenuItem>
+            <Link to="/teams">
+              <MenuItem
+                closeOnSelect
+                value="teams"
+                gap={2}
+                py={2}
+                style={{ cursor: "pointer" }}
+              >
+                <FiUsers fontSize="18px" />
+                <Box flex="1">Teams</Box>
+              </MenuItem>
+            </Link>
 
             <MenuItem
               value="logout"

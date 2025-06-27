@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, useParams } from "@tanstack/react-router"
 import {
   Box,
   Container,
@@ -17,11 +17,12 @@ import useCustomToast from "@/hooks/useCustomToast"
 
 import AddAgent from "@/components/Agents/AddAgent"
 
-export const Route = createFileRoute("/_layout/agents/")({
+export const Route = createFileRoute("/$teamId/agents/")({
   component: AgentsList,
 })
 
 function AgentsList() {
+  const { teamId } = useParams({ from: "/_layout/$teamId/agents/" })
   const { showErrorToast } = useCustomToast()
 
   const {
@@ -30,8 +31,8 @@ function AgentsList() {
     isError,
     error,
   } = useQuery({
-    queryKey: ["agents"],
-    queryFn: () => AgentsService.readAgents({}),
+    queryKey: ["agents", teamId],
+    queryFn: () => AgentsService.readAgents({ teamId }),
   })
 
   if (isError) {
@@ -47,7 +48,7 @@ function AgentsList() {
         </Heading>
 
         <Flex py={8} gap={4}>
-          <AddAgent />
+          <AddAgent teamId={teamId} />
         </Flex>
 
         {isLoading ? (
@@ -70,8 +71,8 @@ function AgentsList() {
                 {agents?.data?.map((agent: AgentPublic) => (
                   <Link 
                     key={agent.id} 
-                    to="/agents/$agentId" 
-                    params={{ agentId: agent.id }}
+                    to="/$teamId/agents/$agentId" 
+                    params={{ teamId, agentId: agent.id }}
                     style={{ display: "contents" }}
                   >
                     <Table.Row 
@@ -85,7 +86,7 @@ function AgentsList() {
                         </Text>
                       </Table.Cell>
                       <Table.Cell>
-                        <Badge variant="outline">{agent.llm_model}</Badge>
+                        <Badge variant="outline">Version {agent.current_config_version}</Badge>
                       </Table.Cell>
                       <Table.Cell>
                         <Badge

@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
 import {
@@ -8,14 +8,16 @@ import {
   Input,
   Text,
   VStack,
+  Textarea,
+  Select,
 } from "@chakra-ui/react"
 import { useState } from "react"
 import { FiPlus } from "react-icons/fi"
 
-import { type AgentCreate, AgentsService } from "@/client"
-import type { ApiError } from "@/client/core/ApiError"
-import useCustomToast from "@/hooks/useCustomToast"
-import { handleError } from "@/utils"
+import { type AgentCreate, AgentsService, TeamsService } from "../../client"
+import type { ApiError } from "../../client/core/ApiError"
+import useCustomToast from "../../hooks/useCustomToast"
+import { handleError } from "../../utils"
 import {
   DialogBody,
   DialogCloseTrigger,
@@ -27,27 +29,33 @@ import {
 } from "../ui/dialog"
 import { Field } from "../ui/field"
 
-const AddAgent = () => {
+interface AddAgentProps {
+  teamId?: string
+}
+
+const AddAgent = ({ teamId }: AddAgentProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const queryClient = useQueryClient()
   const { showSuccessToast } = useCustomToast()
+
+  // Fetch teams for selection
+  const { data: teamsData } = useQuery({
+    queryKey: ["teams"],
+    queryFn: () => TeamsService.readTeams({}),
+  })
+
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors, isValid, isSubmitting },
-  } = useForm<AgentCreate>({
+  } = useForm<{
+    name: string
+  }>({
     mode: "onBlur",
     criteriaMode: "all",
     defaultValues: {
       name: "",
-      description: "",
-      task_prompt: "",
-      llm_model: "gpt-4o",
-      llm_config: {},
-      browser_settings: {},
-      agent_settings: {},
-      is_active: true,
     },
   })
 
@@ -67,13 +75,34 @@ const AddAgent = () => {
     },
   })
 
-  const onSubmit: SubmitHandler<AgentCreate> = (data) => {
-    mutation.mutate(data)
+  const onSubmit: SubmitHandler<{
+    name: string
+  }> = (data) => {
+    // Use the first available team if no teamId is provided
+    const defaultTeamId = teamId || (teams.length > 0 ? teams[0].id : "")
+    
+    const agentData: AgentCreate = {
+      name: data.name,
+      description: "",
+      team_id: defaultTeamId,
+      is_active: true,
+      initial_config: {
+        task_prompt: "You are a helpful browser automation agent. Please help the user with their tasks.",
+        llm_model: "gpt-4o",
+        llm_config: {},
+        browser_settings: {},
+        agent_settings: {},
+        change_description: "Initial configuration",
+      },
+    }
+    mutation.mutate(agentData)
   }
+
+  const teams = teamsData?.data || []
 
   return (
     <DialogRoot
-      size={{ base: "xs", md: "lg" }}
+      size={{ base: "xs", md: "xl" }}
       placement="center"
       open={isOpen}
       onOpenChange={({ open }) => setIsOpen(open)}
@@ -90,24 +119,24 @@ const AddAgent = () => {
             <DialogTitle>Add Agent</DialogTitle>
           </DialogHeader>
           <DialogBody>
-            <Text mb={4}>Enter a name for the new agent.</Text>
-            <VStack gap={4}>
-              <Field
-                required
-                invalid={!!errors.name}
-                errorText={errors.name?.message}
-                label="Name"
-              >
-                <Input
-                  id="name"
-                  {...register("name", {
-                    required: "Name is required.",
-                  })}
-                  placeholder="Agent name"
-                  type="text"
-                />
-              </Field>
-            </VStack>
+            <Field
+              required
+              invalid={!!errors.name}
+              errorText={errors.name?.message}
+              label="Agent Name"
+            >
+              <Input
+                id="name"
+                {...register("name", {
+                  required: "Name is required.",
+                })}
+                placeholder="Enter agent name"
+                type="text"
+              />
+            </Field>
+            <Text fontSize="sm" color="gray.500" mt={2}>
+              The agent will be created with default settings. You can configure it further after creation.
+            </Text>
           </DialogBody>
 
           <DialogFooter gap={2}>

@@ -10,24 +10,23 @@ import {
 import { useQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 
-import { ApiKeysService } from "@/client"
-import type { APIKeyPublic } from "@/client"
+import { TeamsService } from "@/client"
+import type { TeamPublic } from "@/client"
 import useCustomToast from "@/hooks/useCustomToast"
 
-import AddApiKey from "@/components/ApiKeys/AddApiKey"
-import DeleteApiKey from "@/components/ApiKeys/DeleteApiKey"
+import AddTeam from "@/components/Teams/AddTeam"
 
-const ApiKeysList = () => {
+const TeamsList = () => {
   const { showErrorToast } = useCustomToast()
 
   const {
-    data: apiKeys,
+    data: teams,
     isLoading,
     isError,
     error,
   } = useQuery({
-    queryKey: ["api-keys"],
-    queryFn: () => ApiKeysService.readApiKeys({}),
+    queryKey: ["teams"],
+    queryFn: () => TeamsService.readTeams({}),
   })
 
   if (isError) {
@@ -38,11 +37,11 @@ const ApiKeysList = () => {
   return (
     <Container maxW="full">
       <Heading size="lg" textAlign={{ base: "center", md: "left" }} pt={12}>
-        API Keys
+        Teams
       </Heading>
 
       <Flex py={8} gap={4}>
-        <AddApiKey />
+        <AddTeam />
       </Flex>
 
       {isLoading ? (
@@ -55,48 +54,44 @@ const ApiKeysList = () => {
             <Table.Header>
               <Table.Row>
                 <Table.ColumnHeader>Name</Table.ColumnHeader>
-                <Table.ColumnHeader>Key Prefix</Table.ColumnHeader>
+                <Table.ColumnHeader>Description</Table.ColumnHeader>
                 <Table.ColumnHeader>Status</Table.ColumnHeader>
                 <Table.ColumnHeader>Created</Table.ColumnHeader>
-                <Table.ColumnHeader>Last Used</Table.ColumnHeader>
-                <Table.ColumnHeader>Actions</Table.ColumnHeader>
+                <Table.ColumnHeader>Updated</Table.ColumnHeader>
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {apiKeys?.data?.map((apiKey: APIKeyPublic) => (
-                <Table.Row key={apiKey.id}>
-                  <Table.Cell fontWeight="bold">{apiKey.name}</Table.Cell>
-                  <Table.Cell fontFamily="mono">
-                    {apiKey.key_prefix}...
+              {teams?.data?.map((team: TeamPublic) => (
+                <Table.Row key={team.id}>
+                  <Table.Cell fontWeight="bold">{team.name}</Table.Cell>
+                  <Table.Cell>
+                    <Text truncate maxW="200px">
+                      {team.description || "No description"}
+                    </Text>
                   </Table.Cell>
                   <Table.Cell>
                     <Badge
-                      colorPalette={apiKey.is_active ? "green" : "red"}
+                      colorPalette={team.is_active ? "green" : "red"}
                       variant="subtle"
                     >
-                      {apiKey.is_active ? "Active" : "Inactive"}
+                      {team.is_active ? "Active" : "Inactive"}
                     </Badge>
                   </Table.Cell>
                   <Table.Cell>
-                    {new Date(apiKey.created_at).toLocaleDateString()}
+                    {new Date(team.created_at).toLocaleDateString()}
                   </Table.Cell>
                   <Table.Cell>
-                    {apiKey.last_used
-                      ? new Date(apiKey.last_used).toLocaleDateString()
-                      : "Never"}
-                  </Table.Cell>
-                  <Table.Cell>
-                    <DeleteApiKey id={apiKey.id} name={apiKey.name} />
+                    {new Date(team.updated_at).toLocaleDateString()}
                   </Table.Cell>
                 </Table.Row>
               ))}
             </Table.Body>
           </Table.Root>
 
-          {apiKeys?.data?.length === 0 && (
+          {teams?.data?.length === 0 && (
             <Flex justify="center" py={8}>
               <Text color="gray.500">
-                No API keys found. Create an API key to enable external access!
+                No teams found. Create your first team to get started!
               </Text>
             </Flex>
           )}
@@ -106,6 +101,6 @@ const ApiKeysList = () => {
   )
 }
 
-export const Route = createFileRoute("/_layout/api-keys")({
-  component: ApiKeysList,
+export const Route = createFileRoute("/")({
+  component: TeamsList,
 })

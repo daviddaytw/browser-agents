@@ -12,25 +12,30 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as SignupImport } from './routes/signup'
+import { Route as SettingsImport } from './routes/settings'
 import { Route as ResetPasswordImport } from './routes/reset-password'
 import { Route as RecoverPasswordImport } from './routes/recover-password'
 import { Route as LoginImport } from './routes/login'
-import { Route as LayoutImport } from './routes/_layout'
-import { Route as LayoutIndexImport } from './routes/_layout/index'
-import { Route as LayoutSettingsImport } from './routes/_layout/settings'
-import { Route as LayoutItemsImport } from './routes/_layout/items'
-import { Route as LayoutExecutionsImport } from './routes/_layout/executions'
-import { Route as LayoutApiKeysImport } from './routes/_layout/api-keys'
-import { Route as LayoutAdminImport } from './routes/_layout/admin'
-import { Route as LayoutAgentsIndexImport } from './routes/_layout/agents/index'
-import { Route as LayoutAgentsAgentIdIndexImport } from './routes/_layout/agents/$agentId/index'
-import { Route as LayoutAgentsAgentIdSettingsImport } from './routes/_layout/agents/$agentId/settings'
-import { Route as LayoutAgentsAgentIdExecutionsImport } from './routes/_layout/agents/$agentId/executions'
+import { Route as TeamIdImport } from './routes/$teamId'
+import { Route as IndexImport } from './routes/index'
+import { Route as TeamIdIndexImport } from './routes/$teamId/index'
+import { Route as TeamIdExecutionsImport } from './routes/$teamId/executions'
+import { Route as TeamIdApiKeysImport } from './routes/$teamId/api-keys'
+import { Route as TeamIdAdminImport } from './routes/$teamId/admin'
+import { Route as TeamIdAgentsIndexImport } from './routes/$teamId/agents/index'
+import { Route as TeamIdAgentsAgentIdIndexImport } from './routes/$teamId/agents/$agentId/index'
+import { Route as TeamIdAgentsAgentIdSettingsImport } from './routes/$teamId/agents/$agentId/settings'
+import { Route as TeamIdAgentsAgentIdExecutionsImport } from './routes/$teamId/agents/$agentId/executions'
 
 // Create/Update Routes
 
 const SignupRoute = SignupImport.update({
   path: '/signup',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const SettingsRoute = SettingsImport.update({
+  path: '/settings',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -49,69 +54,68 @@ const LoginRoute = LoginImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const LayoutRoute = LayoutImport.update({
-  id: '/_layout',
+const TeamIdRoute = TeamIdImport.update({
+  path: '/$teamId',
   getParentRoute: () => rootRoute,
 } as any)
 
-const LayoutIndexRoute = LayoutIndexImport.update({
+const IndexRoute = IndexImport.update({
   path: '/',
-  getParentRoute: () => LayoutRoute,
+  getParentRoute: () => rootRoute,
 } as any)
 
-const LayoutSettingsRoute = LayoutSettingsImport.update({
-  path: '/settings',
-  getParentRoute: () => LayoutRoute,
+const TeamIdIndexRoute = TeamIdIndexImport.update({
+  path: '/',
+  getParentRoute: () => TeamIdRoute,
 } as any)
 
-const LayoutItemsRoute = LayoutItemsImport.update({
-  path: '/items',
-  getParentRoute: () => LayoutRoute,
-} as any)
-
-const LayoutExecutionsRoute = LayoutExecutionsImport.update({
+const TeamIdExecutionsRoute = TeamIdExecutionsImport.update({
   path: '/executions',
-  getParentRoute: () => LayoutRoute,
+  getParentRoute: () => TeamIdRoute,
 } as any)
 
-const LayoutApiKeysRoute = LayoutApiKeysImport.update({
+const TeamIdApiKeysRoute = TeamIdApiKeysImport.update({
   path: '/api-keys',
-  getParentRoute: () => LayoutRoute,
+  getParentRoute: () => TeamIdRoute,
 } as any)
 
-const LayoutAdminRoute = LayoutAdminImport.update({
+const TeamIdAdminRoute = TeamIdAdminImport.update({
   path: '/admin',
-  getParentRoute: () => LayoutRoute,
+  getParentRoute: () => TeamIdRoute,
 } as any)
 
-const LayoutAgentsIndexRoute = LayoutAgentsIndexImport.update({
+const TeamIdAgentsIndexRoute = TeamIdAgentsIndexImport.update({
   path: '/agents/',
-  getParentRoute: () => LayoutRoute,
+  getParentRoute: () => TeamIdRoute,
 } as any)
 
-const LayoutAgentsAgentIdIndexRoute = LayoutAgentsAgentIdIndexImport.update({
+const TeamIdAgentsAgentIdIndexRoute = TeamIdAgentsAgentIdIndexImport.update({
   path: '/agents/$agentId/',
-  getParentRoute: () => LayoutRoute,
+  getParentRoute: () => TeamIdRoute,
 } as any)
 
-const LayoutAgentsAgentIdSettingsRoute =
-  LayoutAgentsAgentIdSettingsImport.update({
+const TeamIdAgentsAgentIdSettingsRoute =
+  TeamIdAgentsAgentIdSettingsImport.update({
     path: '/agents/$agentId/settings',
-    getParentRoute: () => LayoutRoute,
+    getParentRoute: () => TeamIdRoute,
   } as any)
 
-const LayoutAgentsAgentIdExecutionsRoute =
-  LayoutAgentsAgentIdExecutionsImport.update({
+const TeamIdAgentsAgentIdExecutionsRoute =
+  TeamIdAgentsAgentIdExecutionsImport.update({
     path: '/agents/$agentId/executions',
-    getParentRoute: () => LayoutRoute,
+    getParentRoute: () => TeamIdRoute,
   } as any)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_layout': {
-      preLoaderRoute: typeof LayoutImport
+    '/': {
+      preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/$teamId': {
+      preLoaderRoute: typeof TeamIdImport
       parentRoute: typeof rootRoute
     }
     '/login': {
@@ -126,49 +130,45 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResetPasswordImport
       parentRoute: typeof rootRoute
     }
+    '/settings': {
+      preLoaderRoute: typeof SettingsImport
+      parentRoute: typeof rootRoute
+    }
     '/signup': {
       preLoaderRoute: typeof SignupImport
       parentRoute: typeof rootRoute
     }
-    '/_layout/admin': {
-      preLoaderRoute: typeof LayoutAdminImport
-      parentRoute: typeof LayoutImport
+    '/$teamId/admin': {
+      preLoaderRoute: typeof TeamIdAdminImport
+      parentRoute: typeof TeamIdImport
     }
-    '/_layout/api-keys': {
-      preLoaderRoute: typeof LayoutApiKeysImport
-      parentRoute: typeof LayoutImport
+    '/$teamId/api-keys': {
+      preLoaderRoute: typeof TeamIdApiKeysImport
+      parentRoute: typeof TeamIdImport
     }
-    '/_layout/executions': {
-      preLoaderRoute: typeof LayoutExecutionsImport
-      parentRoute: typeof LayoutImport
+    '/$teamId/executions': {
+      preLoaderRoute: typeof TeamIdExecutionsImport
+      parentRoute: typeof TeamIdImport
     }
-    '/_layout/items': {
-      preLoaderRoute: typeof LayoutItemsImport
-      parentRoute: typeof LayoutImport
+    '/$teamId/': {
+      preLoaderRoute: typeof TeamIdIndexImport
+      parentRoute: typeof TeamIdImport
     }
-    '/_layout/settings': {
-      preLoaderRoute: typeof LayoutSettingsImport
-      parentRoute: typeof LayoutImport
+    '/$teamId/agents/': {
+      preLoaderRoute: typeof TeamIdAgentsIndexImport
+      parentRoute: typeof TeamIdImport
     }
-    '/_layout/': {
-      preLoaderRoute: typeof LayoutIndexImport
-      parentRoute: typeof LayoutImport
+    '/$teamId/agents/$agentId/executions': {
+      preLoaderRoute: typeof TeamIdAgentsAgentIdExecutionsImport
+      parentRoute: typeof TeamIdImport
     }
-    '/_layout/agents/': {
-      preLoaderRoute: typeof LayoutAgentsIndexImport
-      parentRoute: typeof LayoutImport
+    '/$teamId/agents/$agentId/settings': {
+      preLoaderRoute: typeof TeamIdAgentsAgentIdSettingsImport
+      parentRoute: typeof TeamIdImport
     }
-    '/_layout/agents/$agentId/executions': {
-      preLoaderRoute: typeof LayoutAgentsAgentIdExecutionsImport
-      parentRoute: typeof LayoutImport
-    }
-    '/_layout/agents/$agentId/settings': {
-      preLoaderRoute: typeof LayoutAgentsAgentIdSettingsImport
-      parentRoute: typeof LayoutImport
-    }
-    '/_layout/agents/$agentId/': {
-      preLoaderRoute: typeof LayoutAgentsAgentIdIndexImport
-      parentRoute: typeof LayoutImport
+    '/$teamId/agents/$agentId/': {
+      preLoaderRoute: typeof TeamIdAgentsAgentIdIndexImport
+      parentRoute: typeof TeamIdImport
     }
   }
 }
@@ -176,21 +176,21 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 export const routeTree = rootRoute.addChildren([
-  LayoutRoute.addChildren([
-    LayoutAdminRoute,
-    LayoutApiKeysRoute,
-    LayoutExecutionsRoute,
-    LayoutItemsRoute,
-    LayoutSettingsRoute,
-    LayoutIndexRoute,
-    LayoutAgentsIndexRoute,
-    LayoutAgentsAgentIdExecutionsRoute,
-    LayoutAgentsAgentIdSettingsRoute,
-    LayoutAgentsAgentIdIndexRoute,
+  IndexRoute,
+  TeamIdRoute.addChildren([
+    TeamIdAdminRoute,
+    TeamIdApiKeysRoute,
+    TeamIdExecutionsRoute,
+    TeamIdIndexRoute,
+    TeamIdAgentsIndexRoute,
+    TeamIdAgentsAgentIdExecutionsRoute,
+    TeamIdAgentsAgentIdSettingsRoute,
+    TeamIdAgentsAgentIdIndexRoute,
   ]),
   LoginRoute,
   RecoverPasswordRoute,
   ResetPasswordRoute,
+  SettingsRoute,
   SignupRoute,
 ])
 
