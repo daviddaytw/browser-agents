@@ -333,7 +333,7 @@ wheels = [
 
 [[package]]
 name = "browser-use"
-version = "0.3.3"
+version = "0.4.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiofiles" },
@@ -350,6 +350,7 @@ dependencies = [
     { name = "openai" },
     { name = "patchright" },
     { name = "playwright" },
+    { name = "portalocker" },
     { name = "posthog" },
     { name = "psutil" },
     { name = "pydantic" },
@@ -361,9 +362,9 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "uuid7" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e4/c5/72bd1ae6c02dd08e71fe48dd552698c788f6bfcfda338da954441cd34d28/browser_use-0.3.3.tar.gz", hash = "sha256:561dddbfb0ae7e9dcfa0b78c6c0942b2a1e072727fd2aa01da2318fff231acc1", size = 191364, upload-time = "2025-06-26T10:36:09.873Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a3/be/d762fbbe802c301cf6797c7685923f448f91de280cbd95c683d6be30b368/browser_use-0.4.0.tar.gz", hash = "sha256:44f59d3977f3caa4fdd28cbdb434f445cb4d2107faf19f9cf116fa6d3e0eac6c", size = 192571, upload-time = "2025-06-27T13:42:37.047Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/34/41/ab0d595ce718637a6db4596c30a3bf320f49a5f45b537e2652977240b1de/browser_use-0.3.3-py3-none-any.whl", hash = "sha256:00ff31fac0fa4a3f50289babd18947f45f009c775e620da5d60511fed94907d7", size = 222072, upload-time = "2025-06-26T10:36:08.362Z" },
+    { url = "https://files.pythonhosted.org/packages/1a/70/799d44a5f838d0d2d05c57c4606815bc9a719496c6e7cfd07f3421bcd401/browser_use-0.4.0-py3-none-any.whl", hash = "sha256:56ceead95413e06289627acc6b49995fbe548106e2b70d7d27b779faed4e3330", size = 226415, upload-time = "2025-06-27T13:42:35.909Z" },
 ]
 
 [[package]]
