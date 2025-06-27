@@ -1,346 +1,295 @@
 # Browser Agents - AI Browser Automation Platform
 
-A comprehensive web interface for building, managing, and executing AI browser agents using the browser-use library. This platform allows users to create intelligent browser automation agents that can perform complex web tasks using Large Language Models.
+Browser Agents is a web platform that lets you create, deploy, and manage AI-powered browser automation agents. Build intelligent bots that can navigate websites, extract data, fill forms, and perform complex web tasks using natural language instructions.
 
-## Features
 
-### 🤖 Agent Management
-- **Create & Configure Agents**: Build browser agents with custom prompts and LLM configurations
-- **Multiple LLM Support**: Compatible with OpenAI GPT models and Anthropic Claude models
-- **Agent Settings**: Configure browser behavior, memory settings, and execution parameters
-- **Active/Inactive Status**: Enable or disable agents as needed
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Python](https://img.shields.io/badge/Python-3.11+-green.svg)](https://python.org)
+[![React](https://img.shields.io/badge/React-18+-blue.svg)](https://reactjs.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-Latest-teal.svg)](https://fastapi.tiangolo.com)
+[![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://docker.com)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-### 🚀 Agent Execution
-- **Test Interface**: Test agents with custom parameters before deployment
-- **Async Execution**: Run agents in the background with real-time status updates
-- **Execution History**: Track all agent runs with detailed logs and results
-- **Error Handling**: Comprehensive error tracking and debugging information
+[🚀 Quick Start](#-quick-start) • [📖 Documentation](#-documentation) • [🎯 Features](#-key-features) • [🤝 Contributing](#-contributing) • [💬 Community](#-community--support)
 
-### 🔑 API & Automation
-- **API Key Management**: Generate and manage API keys for external access
-- **REST API**: Execute agents programmatically via HTTP endpoints
-- **Webhook Support**: Configure webhooks for agent completion notifications
-- **Parameter Injection**: Pass dynamic parameters to agent tasks
 
-### 📊 Monitoring & Analytics
-- **Dashboard Overview**: Real-time statistics and recent activity
-- **Execution Logs**: Detailed execution history with screenshots and action logs
-- **Performance Metrics**: Track agent success rates and execution times
-- **User Management**: Multi-user support with role-based access control
+## ✨ Key Features
 
-## Technology Stack
+<table>
+<tr>
+<td width="50%">
 
-### Backend
-- **FastAPI**: Modern Python web framework with automatic API documentation
-- **SQLModel**: Type-safe database models with SQLAlchemy integration
-- **PostgreSQL**: Robust relational database for data persistence
-- **Alembic**: Database migration management
-- **browser-use**: Core library for browser automation with LLMs
-- **LangChain**: LLM integration framework supporting multiple providers
+### 🎨 **No-Code Agent Builder**
+- Visual drag-and-drop interface
+- Natural language task descriptions
+- Pre-built templates for common use cases
+- Smart configuration recommendations
 
-### Frontend
-- **React 18**: Modern React with hooks and functional components
-- **TypeScript**: Type-safe JavaScript for better development experience
-- **Chakra UI**: Modern component library with excellent accessibility
-- **TanStack Router**: Type-safe routing with file-based route generation
-- **TanStack Query**: Powerful data fetching and caching
-- **Vite**: Fast build tool and development server
+### 🧠 **Multi-Model AI Support**
+- OpenAI GPT-4o, GPT-4 Turbo
+- Anthropic Claude 3.5 Sonnet, Claude 3 Opus
+- Google Gemini Pro
+- Custom model configurations
 
-## Quick Start
+</td>
+<td width="50%">
+
+### 📊 **Enterprise Dashboard**
+- Real-time execution monitoring
+- Performance analytics & insights
+- Detailed execution logs with screenshots
+- Team collaboration & user management
+
+### 🔌 **Developer APIs**
+- RESTful API with OpenAPI docs
+- Webhook integrations
+- API key management
+- SDK support (Python, JavaScript)
+
+</td>
+</tr>
+</table>
+
+### 🚀 **Advanced Capabilities**
+
+- **Visual Understanding**: Agents can see and interact with web pages like humans
+- **Context Memory**: Maintains state across complex multi-step workflows
+- **Error Recovery**: Smart retry mechanisms and failure handling
+- **Parallel Execution**: Run multiple agents simultaneously
+- **Data Export**: CSV, JSON, Excel export formats
+
+## 🏗️ Architecture
+
+```mermaid
+graph TB
+    A[Web Interface] --> B[FastAPI Backend]
+    B --> C[Agent Executor]
+    C --> D[Browser Engine]
+    C --> E[LLM Provider]
+    B --> F[PostgreSQL Database]
+    B --> G[Task Queue]
+    
+    subgraph "AI Models"
+        E --> H[OpenAI GPT-4o]
+        E --> I[Anthropic Claude]
+        E --> J[Google Gemini]
+    end
+    
+    subgraph "Browser Automation"
+        D --> K[Playwright]
+        D --> L[browser-use]
+    end
+```
+
+## 🚀 Quick Start
 
 ### Prerequisites
-- Python 3.11+
-- Node.js 18+
-- PostgreSQL (or Docker for containerized setup)
 
-### Backend Setup
+- **Docker & Docker Compose** (recommended)
+- **Python 3.11+** (for local development)
+- **Node.js 18+** (for frontend development)
+- **PostgreSQL 13+** (if not using Docker)
 
-1. **Environment Setup**
+### 🐳 Docker Installation (Recommended)
+
+Get up and running in under 5 minutes:
+
 ```bash
+# 1. Clone the repository
+git clone https://github.com/daviddaytw/browser-agents.git
+cd browser-agents
+
+# 2. Configure environment
+cp .env.example .env
+# Edit .env with your settings (see Configuration section below)
+
+# 3. Start all services
+docker compose up -d
+
+# 4. Access the platform
+open http://localhost:5173
+```
+
+### 🛠️ Local Development Setup
+
+For development or customization:
+
+<details>
+<summary>Click to expand local setup instructions</summary>
+
+```bash
+# Backend setup
 cd backend
-uv venv --python 3.11
+python -m venv .venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-uv pip install -r requirements.txt
-```
-
-2. **Environment Variables**
-Create a `.env` file in the project root:
-```env
-# Project settings
-PROJECT_NAME=Browser Agents
-
-# Database settings
-POSTGRES_SERVER=localhost
-POSTGRES_PORT=5432
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=your_password
-POSTGRES_DB=browser_agents
-
-# Security
-SECRET_KEY=your_secret_key_here
-
-# First superuser
-FIRST_SUPERUSER=admin@example.com
-FIRST_SUPERUSER_PASSWORD=your_admin_password
-
-# Environment
-ENVIRONMENT=local
-```
-
-3. **Database Migration**
-```bash
-cd backend
+pip install uv
+uv sync
 uv run alembic upgrade head
-```
+uv run uvicorn app.main:app --reload --port 8000
 
-4. **Start Backend Server**
-```bash
-cd backend
-uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-```
-
-### Frontend Setup
-
-1. **Install Dependencies**
-```bash
+# Frontend setup (new terminal)
 cd frontend
 npm install
-```
-
-2. **Generate API Client**
-```bash
 npm run generate-client
-```
-
-3. **Start Development Server**
-```bash
 npm run dev
 ```
 
-The application will be available at:
-- Frontend: http://localhost:5173
-- Backend API: http://localhost:8000
-- API Documentation: http://localhost:8000/docs
+</details>
 
-## Usage Guide
+## API Usage
 
-### Creating Your First Agent
+### Python
+```python
+import requests
 
-1. **Login** to the application using your admin credentials
-2. **Navigate** to the "Agents" section
-3. **Click "Add Agent"** to create a new browser agent
-4. **Configure the agent**:
-   - **Name**: Give your agent a descriptive name
-   - **Description**: Brief description of what the agent does
-   - **Task Prompt**: Detailed instructions for the agent
-   - **LLM Model**: Choose from available models (GPT-4o, Claude, etc.)
-   - **Status**: Set to active to enable execution
-
-### Testing an Agent
-
-1. **Go to the Agents list** and find your agent
-2. **Click the play button** to test the agent
-3. **Provide test parameters** if your agent uses dynamic inputs
-4. **Monitor execution** in real-time
-5. **Review results** including screenshots and action logs
-
-### API Integration
-
-1. **Generate an API Key**:
-   - Go to "API Keys" section
-   - Click "Add API Key"
-   - Copy the generated key (shown only once)
-
-2. **Execute Agent via API**:
-```bash
-curl -X POST "http://localhost:8000/api/v1/agents/{agent_id}/execute" \
-  -H "Authorization: Bearer your_api_key" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "task_input": "Custom task description",
-    "parameters": {
-      "search_term": "example",
-      "max_results": 10
+# Create agent
+response = requests.post(
+    "http://localhost:8000/api/v1/agents",
+    headers={"Authorization": "Bearer your_api_key"},
+    json={
+        "name": "Data Extractor",
+        "task_prompt": "Extract all product names and prices from {url}",
+        "llm_model": "claude-3-5-sonnet"
     }
-  }'
+)
+
+agent_id = response.json()["id"]
+
+# Execute agent
+execution = requests.post(
+    f"http://localhost:8000/api/v1/agents/{agent_id}/execute",
+    headers={"Authorization": "Bearer your_api_key"},
+    json={
+        "parameters": {
+            "url": "https://example-store.com/products"
+        }
+    }
+)
+
+print(f"Execution ID: {execution.json()['id']}")
 ```
 
-## Agent Configuration
+### JavaScript/Node.js
 
-### LLM Configuration
-```json
-{
-  "api_key": "your_openai_or_anthropic_key",
-  "temperature": 0.7,
-  "max_tokens": 4000
-}
+```javascript
+const axios = require('axios');
+
+const client = axios.create({
+  baseURL: 'http://localhost:8000/api/v1',
+  headers: { 'Authorization': 'Bearer your_api_key' }
+});
+
+// Execute agent
+const execution = await client.post(`/agents/${agentId}/execute`, {
+  parameters: { url: 'https://example.com' }
+});
+
+console.log('Execution started:', execution.data.id);
 ```
 
-### Browser Settings
-```json
-{
-  "headless": true,
-  "viewport": {"width": 1280, "height": 720},
-  "user_agent": "custom_user_agent"
-}
-```
+## 🛡️ Security & Compliance
 
-### Agent Settings
-```json
-{
-  "max_steps": 100,
-  "use_vision": true,
-  "enable_memory": true,
-  "memory_interval": 10
-}
-```
+- **🔐 Secure Authentication**: JWT-based authentication with API key management
+- **🔒 Data Encryption**: All data encrypted in transit (TLS) and at rest
+- **🛡️ Input Validation**: Comprehensive input sanitization and validation
+- **📊 Audit Logging**: Complete audit trail of all actions and changes
+- **🏢 Enterprise Ready**: GDPR compliant with enterprise security features
+- **🔑 Role-Based Access**: Granular permissions and user management
+- **🚫 Rate Limiting**: API rate limiting and abuse prevention
 
-## Supported LLM Models
+## 🤝 Contributing
 
-### OpenAI Models
-- GPT-4o
-- GPT-4o Mini
-- GPT-4 Turbo
+We welcome contributions from the community! Whether you're fixing bugs, adding features, or improving documentation, your help makes Browser Agents better for everyone.
 
-### Anthropic Models
-- Claude 3.5 Sonnet
-- Claude 3.5 Haiku
-- Claude 3 Opus
+### 🚀 Quick Contribution Guide
 
-## API Reference
+1. **Fork** the repository
+2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
+3. **Commit** your changes (`git commit -m 'Add amazing feature'`)
+4. **Push** to the branch (`git push origin feature/amazing-feature`)
+5. **Open** a Pull Request
 
-### Authentication
-All API endpoints require authentication via API key:
-```
-Authorization: Bearer your_api_key
-```
+### 📋 Development Setup
 
-### Core Endpoints
-
-#### Agents
-- `GET /api/v1/agents/` - List all agents
-- `POST /api/v1/agents/` - Create new agent
-- `GET /api/v1/agents/{id}` - Get agent details
-- `PUT /api/v1/agents/{id}` - Update agent
-- `DELETE /api/v1/agents/{id}` - Delete agent
-- `POST /api/v1/agents/{id}/test` - Test agent (synchronous)
-- `POST /api/v1/agents/{id}/execute` - Execute agent (asynchronous)
-
-#### Executions
-- `GET /api/v1/executions/` - List executions
-- `GET /api/v1/executions/{id}` - Get execution details
-- `PUT /api/v1/executions/{id}/cancel` - Cancel running execution
-
-#### API Keys
-- `GET /api/v1/api-keys/` - List API keys
-- `POST /api/v1/api-keys/` - Create API key
-- `DELETE /api/v1/api-keys/{id}` - Delete API key
-
-## Development
-
-### Project Structure
-```
-browser-agents/
-├── backend/                 # FastAPI backend
-│   ├── app/
-│   │   ├── api/            # API routes
-│   │   ├── core/           # Core configuration
-│   │   ├── models.py       # Database models
-│   │   ├── services/       # Business logic
-│   │   └── alembic/        # Database migrations
-│   └── pyproject.toml      # Python dependencies
-├── frontend/               # React frontend
-│   ├── src/
-│   │   ├── components/     # React components
-│   │   ├── routes/         # Page routes
-│   │   ├── client/         # Generated API client
-│   │   └── hooks/          # Custom React hooks
-│   └── package.json        # Node.js dependencies
-└── docker-compose.yml      # Docker configuration
-```
-
-### Adding New Features
-
-1. **Backend Changes**:
-   - Add new models in `backend/app/models.py`
-   - Create API routes in `backend/app/api/routes/`
-   - Add business logic in `backend/app/services/`
-   - Create database migration: `alembic revision --autogenerate -m "description"`
-
-2. **Frontend Changes**:
-   - Regenerate API client: `npm run generate-client`
-   - Add new components in `frontend/src/components/`
-   - Create new routes in `frontend/src/routes/`
-   - Update navigation in `frontend/src/components/Common/SidebarItems.tsx`
-
-### Running Tests
-
-#### Backend Tests
 ```bash
-cd backend
-uv run pytest
+# Install development dependencies
+cd backend && uv sync --dev
+cd frontend && npm install
+
+# Run tests
+cd backend && uv run pytest
+cd frontend && npm test
+
+# Code formatting
+cd backend && uv run ruff format .
+cd frontend && npm run lint
 ```
 
-#### Frontend Tests
-```bash
-cd frontend
-npm run test
-```
+### 🎯 Ways to Contribute
 
-## Deployment
+- 🐛 **Report Bugs**: Help us identify and fix issues
+- 💡 **Suggest Features**: Share ideas for new functionality  
+- 📝 **Improve Documentation**: Help others understand the platform
+- 🔧 **Submit Code**: Fix bugs or add new features
+- 🎨 **Design & UX**: Improve the user interface and experience
 
-### Docker Deployment
-```bash
-# Build and start all services
-docker-compose up -d
+**👉 [Read our detailed Contributing Guide](CONTRIBUTING.md)**
 
-# View logs
-docker-compose logs -f
+## ❓ FAQ
 
-# Stop services
-docker-compose down
-```
+<details>
+<summary><strong>What makes Browser Agents different from other automation tools?</strong></summary>
 
-### Production Considerations
-- Set strong passwords and secret keys
-- Use environment-specific configuration
-- Enable HTTPS with proper SSL certificates
-- Set up database backups
-- Configure monitoring and logging
-- Use a reverse proxy (nginx/traefik)
+Browser Agents combines the power of large language models with browser automation, allowing you to describe tasks in natural language rather than writing complex scripts. It's designed for both technical and non-technical users.
 
-## Security
+</details>
 
-- **Authentication**: JWT-based authentication with secure token handling
-- **API Keys**: Hashed storage with prefix display for identification
-- **Input Validation**: Comprehensive input validation and sanitization
-- **Rate Limiting**: Built-in rate limiting for API endpoints
-- **CORS**: Configurable CORS settings for cross-origin requests
+<details>
+<summary><strong>Which AI models are supported?</strong></summary>
 
-## Contributing
+We support OpenAI (GPT-4o, GPT-4 Turbo), Anthropic (Claude 3.5 Sonnet, Claude 3 Opus), Google (Gemini Pro), and custom model configurations. You can choose the best model for each specific task.
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/new-feature`
-3. Make your changes and add tests
-4. Commit your changes: `git commit -am 'Add new feature'`
-5. Push to the branch: `git push origin feature/new-feature`
-6. Submit a pull request
+</details>
 
-## License
+<details>
+<summary><strong>Is there a free tier available?</strong></summary>
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Yes! The open-source version is completely free. You only pay for the AI model API usage (OpenAI, Anthropic, etc.) and any cloud hosting costs if you choose to deploy it.
 
-## Support
+</details>
 
-For support and questions:
-- Check the [documentation](docs/)
-- Open an [issue](https://github.com/your-repo/browser-agents/issues)
-- Join our [Discord community](https://discord.gg/your-invite)
+<details>
+<summary><strong>Can I run this on-premises?</strong></summary>
 
-## Acknowledgments
+Absolutely! Browser Agents is designed to run on-premises or in your private cloud. All data stays within your infrastructure.
 
-- [browser-use](https://github.com/browser-use/browser-use) - Core browser automation library
-- [FastAPI](https://fastapi.tiangolo.com/) - Modern Python web framework
-- [React](https://reactjs.org/) - Frontend library
-- [Chakra UI](https://chakra-ui.com/) - Component library
-- [LangChain](https://langchain.com/) - LLM integration framework
+</details>
+
+<details>
+<summary><strong>How do I handle websites that require authentication?</strong></summary>
+
+Browser Agents supports various authentication methods including cookies, session storage, and form-based login. You can configure authentication steps as part of your agent's workflow.
+
+</details>
+
+## 📄 License
+
+Browser Agents is open source software licensed under the [Apache License 2.0](LICENSE).
+
+## 🙏 Acknowledgments
+
+Browser Agents is built on the shoulders of giants. Special thanks to:
+
+- **[browser-use](https://github.com/browser-use/browser-use)** - The core browser automation library that powers our agents
+- **[FastAPI](https://fastapi.tiangolo.com/)** - Modern, fast Python web framework for building APIs
+- **[React](https://reactjs.org/)** - A JavaScript library for building user interfaces
+
+---
+
+<div align="center">
+
+**Made with ❤️ by the Browser Agents community**
+
+[⭐ Star us on GitHub](https://github.com/daviddaytw/browser-agents) • [🐛 Report Issues](https://github.com/daviddaytw/browser-agents/issues)
+
+</div>
