@@ -1362,16 +1362,16 @@ wheels = [
 
 [[package]]
 name = "langchain-openai"
-version = "0.3.26"
+version = "0.3.27"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "langchain-core" },
     { name = "openai" },
     { name = "tiktoken" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/6a/d7/8046f7e760a8b17ce3b397c7d222b07fe9105cfeabb62105037794f82a47/langchain_openai-0.3.26.tar.gz", hash = "sha256:6f8420f164095834477d13715bc08a7553cdc229df30110d390c3d8880b728f3", size = 752876, upload-time = "2025-06-26T19:02:19.807Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/6f/7b/e65261a08a03dd43f0ef8a539930b56548ac8136e71258c220d3589d1d07/langchain_openai-0.3.27.tar.gz", hash = "sha256:5d5a55adbff739274dfc3a4102925771736f893758f63679b64ae62fed79ca30", size = 753326, upload-time = "2025-06-27T17:56:29.904Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/22/bc/8e6c720a89ebb10faacd78e4e593055df4fa72390b182499bcf06fb6932b/langchain_openai-0.3.26-py3-none-any.whl", hash = "sha256:2f216b92195e43fc30a28af8842cf704e72abe3b0ae2cbf85004ca75c5274575", size = 70100, upload-time = "2025-06-26T19:02:18.284Z" },
+    { url = "https://files.pythonhosted.org/packages/aa/31/1f0baf6490b082bf4d06f355c5e9c28728931dbf321f3ca03137617a692e/langchain_openai-0.3.27-py3-none-any.whl", hash = "sha256:efe636c3523978c44adc41cf55c8b3766c05c77547982465884d1258afe705df", size = 70368, upload-time = "2025-06-27T17:56:28.726Z" },
 ]
 
 [[package]]
