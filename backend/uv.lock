@@ -333,7 +333,7 @@ wheels = [
 
 [[package]]
 name = "browser-use"
-version = "0.3.3"
+version = "0.4.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiofiles" },
@@ -347,9 +347,11 @@ dependencies = [
     { name = "httpx" },
     { name = "markdownify" },
     { name = "mem0ai" },
+    { name = "ollama" },
     { name = "openai" },
     { name = "patchright" },
     { name = "playwright" },
+    { name = "portalocker" },
     { name = "posthog" },
     { name = "psutil" },
     { name = "pydantic" },
@@ -361,9 +363,9 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "uuid7" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e4/c5/72bd1ae6c02dd08e71fe48dd552698c788f6bfcfda338da954441cd34d28/browser_use-0.3.3.tar.gz", hash = "sha256:561dddbfb0ae7e9dcfa0b78c6c0942b2a1e072727fd2aa01da2318fff231acc1", size = 191364, upload-time = "2025-06-26T10:36:09.873Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/86/b4/10dc08eeea7dbcdfcc700711f0ac3007d39a57137c6de4fac5214953b8b2/browser_use-0.4.2.tar.gz", hash = "sha256:1e2cf3d6b0e1d58e88a4f37df0548577ec393ad9399dcd950047be05e61fdbda", size = 197925, upload-time = "2025-06-30T08:38:00.457Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/34/41/ab0d595ce718637a6db4596c30a3bf320f49a5f45b537e2652977240b1de/browser_use-0.3.3-py3-none-any.whl", hash = "sha256:00ff31fac0fa4a3f50289babd18947f45f009c775e620da5d60511fed94907d7", size = 222072, upload-time = "2025-06-26T10:36:08.362Z" },
+    { url = "https://files.pythonhosted.org/packages/8f/90/7841302bc9010f6427cbc440bd0533677cc9e6c7b79ac2b82d19c2e6e00b/browser_use-0.4.2-py3-none-any.whl", hash = "sha256:f02e7fa9c62694694ea95c8ac649f94c4266e41a809c71e2a4d86159b143b9e5", size = 237922, upload-time = "2025-06-30T08:37:57.891Z" },
 ]
 
 [[package]]
@@ -1745,6 +1747,19 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/ae/ee/89bedf69c36ace1ac8f59e97811c1f5031e179a37e4821c3a230bf750142/numpy-2.3.1-pp311-pypy311_pp73-manylinux_2_28_aarch64.whl", hash = "sha256:c6e0bf9d1a2f50d2b65a7cf56db37c095af17b59f6c132396f7c6d5dd76484df", size = 14399010, upload-time = "2025-06-21T12:26:54.086Z" },
     { url = "https://files.pythonhosted.org/packages/15/08/e00e7070ede29b2b176165eba18d6f9784d5349be3c0c1218338e79c27fd/numpy-2.3.1-pp311-pypy311_pp73-manylinux_2_28_x86_64.whl", hash = "sha256:eabd7e8740d494ce2b4ea0ff05afa1b7b291e978c0ae075487c51e8bd93c0c68", size = 16752042, upload-time = "2025-06-21T12:27:19.018Z" },
     { url = "https://files.pythonhosted.org/packages/48/6b/1c6b515a83d5564b1698a61efa245727c8feecf308f4091f565988519d20/numpy-2.3.1-pp311-pypy311_pp73-win_amd64.whl", hash = "sha256:e610832418a2bc09d974cc9fecebfa51e9532d6190223bc5ef6a7402ebf3b5cb", size = 12927246, upload-time = "2025-06-21T12:27:38.618Z" },
+]
+
+[[package]]
+name = "ollama"
+version = "0.5.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "httpx" },
+    { name = "pydantic" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/8d/96/c7fe0d2d1b3053be614822a7b722c7465161b3672ce90df71515137580a0/ollama-0.5.1.tar.gz", hash = "sha256:5a799e4dc4e7af638b11e3ae588ab17623ee019e496caaf4323efbaa8feeff93", size = 41112, upload-time = "2025-05-30T21:32:48.679Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d6/76/3f96c8cdbf3955d7a73ee94ce3e0db0755d6de1e0098a70275940d1aff2f/ollama-0.5.1-py3-none-any.whl", hash = "sha256:4c8839f35bc173c7057b1eb2cbe7f498c1a7e134eafc9192824c8aecb3617506", size = 13369, upload-time = "2025-05-30T21:32:47.429Z" },
 ]
 
 [[package]]
