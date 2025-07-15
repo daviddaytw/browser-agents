@@ -2,34 +2,13 @@
 
 Thank you for your interest in contributing to Browser Agents! This guide will help you get started with contributing to our AI browser automation platform.
 
-## Table of Contents
-
-- [Code of Conduct](#code-of-conduct)
-- [Getting Started](#getting-started)
-- [Development Setup](#development-setup)
-- [Project Structure](#project-structure)
-- [Contributing Guidelines](#contributing-guidelines)
-- [Development Workflow](#development-workflow)
-- [Testing](#testing)
-- [Code Standards](#code-standards)
-- [Submitting Changes](#submitting-changes)
-- [Deployment](#deployment)
-- [Getting Help](#getting-help)
-
-## Code of Conduct
-
-By participating in this project, you agree to abide by our code of conduct. We are committed to providing a welcoming and inclusive environment for all contributors.
-
-## Getting Started
+## 🚀 Quick Start
 
 ### Prerequisites
 
-Before you begin, ensure you have the following installed:
-
-- **Python 3.11+** - Backend development
-- **Node.js 18+** - Frontend development  
-- **PostgreSQL** - Database (or Docker for containerized setup)
-- **Docker & Docker Compose** - Containerized development
+- **Python 3.11+** - For browser-pod development
+- **Node.js 18+** - For dashboard development  
+- **Docker & Docker Compose** - For containerized development
 - **Git** - Version control
 
 ### Fork and Clone
@@ -42,573 +21,288 @@ Before you begin, ensure you have the following installed:
    ```
 3. Add the upstream repository:
    ```bash
-   git remote add upstream https://github.com/original-repo/browser-agents.git
+   git remote add upstream https://github.com/daviddaytw/browser-agents.git
    ```
 
-## Development Setup
+## 🏗️ Project Structure
 
-### Environment Configuration
+```
+browser-agents/
+├── browser-pod/            # FastAPI backend service
+│   ├── app/
+│   │   ├── main.py        # FastAPI application
+│   │   ├── config.py      # Configuration settings
+│   │   ├── models/        # Request/response models
+│   │   ├── routers/       # API route handlers
+│   │   ├── services/      # Business logic
+│   │   └── utils/         # Utility functions
+│   ├── main.py            # Application entry point
+│   ├── requirements.txt   # Python dependencies
+│   └── Dockerfile         # Docker configuration
+├── dashboard/             # Next.js frontend application
+│   ├── app/              # Next.js app directory
+│   ├── lib/              # Utility libraries
+│   ├── package.json      # Node.js dependencies
+│   └── Dockerfile        # Docker configuration
+├── docker-compose.yml    # Multi-service setup
+└── README.md            # Project documentation
+```
 
-1. **Copy the environment template**:
+## 🛠️ Development Setup
+
+### Option 1: Docker Compose (Recommended)
+
+Start all services with Docker:
+
+```bash
+# Start all services
+docker-compose up --build
+
+# Start in detached mode
+docker-compose up -d --build
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+```
+
+Access the services:
+- Dashboard: http://localhost:3000
+- Browser Pod API: http://localhost:8000
+- API Documentation: http://localhost:8000/docs
+
+### Option 2: Manual Setup
+
+#### Browser Pod Setup
+
+1. Navigate to the browser-pod directory:
    ```bash
-   cp .env.example .env
+   cd browser-pod
    ```
 
-2. **Configure your environment variables** as needed (see `.env.example` for all available options)
-
-### Backend Setup
-
-1. **Navigate to backend directory**:
+2. Create and activate a virtual environment:
    ```bash
-   cd backend
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
-2. **Create and activate virtual environment**:
+3. Install dependencies:
    ```bash
-   uv venv --python 3.11
-   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   pip install -r requirements.txt
    ```
 
-3. **Install dependencies**:
+4. Install Playwright browsers:
    ```bash
-   uv sync
+   playwright install chromium
    ```
 
-4. **Run database migrations**:
+5. Start the service:
    ```bash
-   uv run alembic upgrade head
+   python main.py
    ```
 
-5. **Start the backend server**:
+#### Dashboard Setup
+
+1. Navigate to the dashboard directory:
    ```bash
-   uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+   cd dashboard
    ```
 
-### Frontend Setup
-
-1. **Navigate to frontend directory**:
-   ```bash
-   cd frontend
-   ```
-
-2. **Install Node.js version** (using fnm or nvm):
-   ```bash
-   # Using fnm
-   fnm install && fnm use
-   
-   # Using nvm
-   nvm install && nvm use
-   ```
-
-3. **Install dependencies**:
+2. Install dependencies:
    ```bash
    npm install
    ```
 
-4. **Generate API client**:
+3. Set up environment variables:
    ```bash
-   npm run generate-client
+   cp .env.example .env.local
+   # Edit .env.local with your configuration
    ```
 
-5. **Start development server**:
+4. Set up the database:
+   ```bash
+   npm run db:push
+   ```
+
+5. Start the development server:
    ```bash
    npm run dev
    ```
 
-### Docker Development (Alternative)
+## 🔧 Making Changes
 
-For a containerized development environment:
+### Development Workflow
 
-```bash
-# Start all services
-docker compose up -d
-
-# Watch for changes (recommended for development)
-docker compose watch
-
-# View logs
-docker compose logs -f
-
-# Stop services
-docker compose down
-```
-
-## Project Structure
-
-```
-browser-agents/
-├── backend/                 # FastAPI backend
-│   ├── app/
-│   │   ├── api/            # API routes and endpoints
-│   │   ├── core/           # Core configuration and utilities
-│   │   ├── services/       # Business logic services
-│   │   ├── models.py       # Database models (SQLModel)
-│   │   ├── crud.py         # Database operations
-│   │   └── alembic/        # Database migrations
-│   ├── scripts/            # Development and deployment scripts
-│   └── pyproject.toml      # Python dependencies and configuration
-├── frontend/               # React frontend
-│   ├── src/
-│   │   ├── components/     # React components
-│   │   ├── routes/         # File-based routing (TanStack Router)
-│   │   ├── client/         # Generated API client
-│   │   ├── hooks/          # Custom React hooks
-│   │   └── theme.tsx       # Chakra UI theme configuration
-│   ├── tests/              # End-to-end tests (Playwright)
-│   └── package.json        # Node.js dependencies
-├── scripts/                # Project-wide scripts
-├── docker-compose.yml      # Docker services configuration
-├── development.md          # Detailed development guide
-├── deployment.md           # Production deployment guide
-└── CONTRIBUTING.md         # This file
-```
-
-## Contributing Guidelines
-
-### Types of Contributions
-
-We welcome various types of contributions:
-
-- **Bug fixes** - Fix issues and improve stability
-- **Feature development** - Add new functionality
-- **Documentation** - Improve guides, API docs, and code comments
-- **Testing** - Add or improve test coverage
-- **Performance** - Optimize code and database queries
-- **UI/UX** - Enhance user interface and experience
-
-### Before You Start
-
-1. **Check existing issues** - Look for related issues or feature requests
-2. **Create an issue** - If none exists, create one to discuss your proposed changes
-3. **Get feedback** - Wait for maintainer feedback before starting significant work
-4. **Assign yourself** - Comment on the issue to let others know you're working on it
-
-## Development Workflow
-
-### Branch Strategy
-
-1. **Create a feature branch**:
+1. Create a feature branch:
    ```bash
    git checkout -b feature/your-feature-name
-   # or
-   git checkout -b fix/issue-description
    ```
 
-2. **Keep your branch updated**:
+2. Make your changes in the appropriate directory:
+   - **Browser Pod**: `/browser-pod/` for backend API changes
+   - **Dashboard**: `/dashboard/` for frontend UI changes
+
+3. Test your changes locally
+
+4. Commit your changes:
    ```bash
-   git fetch upstream
-   git rebase upstream/main
+   git add .
+   git commit -m "feat: add your feature description"
    ```
 
-### Making Changes
-
-#### Backend Changes
-
-1. **Database Models** (`backend/app/models.py`):
-   ```python
-   class NewModel(SQLModel, table=True):
-       id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-       name: str = Field(max_length=255)
-       created_at: datetime = Field(default_factory=datetime.utcnow)
-   ```
-
-2. **Create Migration**:
+5. Push to your fork:
    ```bash
-   cd backend
-   uv run alembic revision --autogenerate -m "add_new_model"
-   uv run alembic upgrade head
+   git push origin feature/your-feature-name
    ```
 
-3. **API Routes** (`backend/app/api/routes/`):
-   ```python
-   @router.get("/", response_model=ItemsPublic)
-   def read_items(session: SessionDep, current_user: CurrentUser):
-       # Implementation
-       pass
-   ```
+6. Create a Pull Request on GitHub
 
-4. **Business Logic** (`backend/app/services/`):
-   ```python
-   class NewService:
-       def __init__(self):
-           # Service initialization
-           pass
-       
-       async def process_data(self, data: dict) -> dict:
-           # Business logic implementation
-           pass
-   ```
+### Code Standards
 
-#### Frontend Changes
+#### Browser Pod (Python)
 
-1. **Regenerate API Client** (after backend changes):
-   ```bash
-   cd frontend
-   npm run generate-client
-   ```
-
-2. **Create Components** (`frontend/src/components/`):
-   ```typescript
-   interface Props {
-     data: ItemPublic[]
-     onUpdate: (item: ItemPublic) => void
-   }
-   
-   export const ItemList: React.FC<Props> = ({ data, onUpdate }) => {
-     // Component implementation
-     return <div>...</div>
-   }
-   ```
-
-3. **Add Routes** (`frontend/src/routes/`):
-   ```typescript
-   export const Route = createFileRoute("/_layout/items")({
-     component: ItemList,
-   })
-   ```
-
-4. **Update Navigation** (`frontend/src/components/Common/SidebarItems.tsx`):
-   ```typescript
-   const items = [
-     // ... existing items
-     { icon: FiIcon, title: "New Feature", path: "/new-feature" },
-   ]
-   ```
-
-## Testing
-
-### Backend Testing
-
-1. **Run all tests**:
-   ```bash
-   cd backend
-   bash ./scripts/test.sh
-   ```
-
-2. **Run specific tests**:
-   ```bash
-   uv run pytest app/tests/api/routes/test_agents.py -v
-   ```
-
-3. **Test with coverage**:
-   ```bash
-   uv run pytest --cov=app --cov-report=html
-   ```
-
-4. **Writing tests**:
-   ```python
-   def test_create_agent(client: TestClient, superuser_token_headers: dict):
-       data = {
-           "name": "Test Agent",
-           "task_prompt": "Test task",
-           "llm_model": "gpt-4o"
-       }
-       response = client.post(
-           f"{settings.API_V1_STR}/agents/",
-           headers=superuser_token_headers,
-           json=data,
-       )
-       assert response.status_code == 200
-       assert response.json()["name"] == data["name"]
-   ```
-
-### Frontend Testing
-
-1. **Run unit tests**:
-   ```bash
-   cd frontend
-   npm run test
-   ```
-
-2. **Run E2E tests**:
-   ```bash
-   # Start backend first
-   docker compose up -d --wait backend
-   
-   # Run Playwright tests
-   npx playwright test
-   
-   # Run with UI
-   npx playwright test --ui
-   ```
-
-3. **Writing component tests**:
-   ```typescript
-   import { render, screen } from '@testing-library/react'
-   import { AgentsList } from './AgentsList'
-   
-   test('renders agents list', () => {
-     render(<AgentsList />)
-     expect(screen.getByText('Browser Agents')).toBeInTheDocument()
-   })
-   ```
-
-## Code Standards
-
-### Backend Standards
-
-- **Type Hints**: Use Python type hints for all functions and methods
-- **Pydantic Models**: Use Pydantic/SQLModel for data validation
-- **Async/Await**: Use async patterns for I/O operations
-- **Error Handling**: Proper HTTP status codes and error messages
-- **Documentation**: Docstrings for all public functions and classes
+- Follow PEP 8 style guidelines
+- Use type hints for function parameters and return values
+- Add docstrings for public functions and classes
+- Use async/await for I/O operations
 
 Example:
 ```python
-async def create_agent(
-    session: SessionDep,
-    current_user: CurrentUser,
-    agent_in: AgentCreate,
-) -> AgentPublic:
+from typing import List
+from fastapi import APIRouter
+
+router = APIRouter()
+
+@router.get("/tasks", response_model=List[TaskResponse])
+async def get_tasks() -> List[TaskResponse]:
     """
-    Create a new browser agent.
+    Retrieve all tasks.
     
-    Args:
-        session: Database session
-        current_user: Authenticated user
-        agent_in: Agent creation data
-        
     Returns:
-        Created agent data
-        
-    Raises:
-        HTTPException: If creation fails
+        List of task objects
     """
-    agent = Agent.model_validate(agent_in, update={"owner_id": current_user.id})
-    session.add(agent)
-    session.commit()
-    session.refresh(agent)
-    return agent
+    # Implementation here
+    pass
 ```
 
-### Frontend Standards
+#### Dashboard (TypeScript/React)
 
-- **TypeScript**: Strict TypeScript configuration
-- **Component Props**: Proper interfaces for component props
-- **Hooks**: Custom hooks for reusable logic
-- **Error Handling**: Error boundaries and proper error states
-- **Accessibility**: ARIA labels and keyboard navigation
+- Use TypeScript for all new code
+- Follow React best practices and hooks patterns
+- Use proper component prop interfaces
+- Implement proper error handling
 
 Example:
 ```typescript
-interface AgentFormProps {
-  agent?: AgentPublic
-  onSubmit: (data: AgentCreate) => Promise<void>
-  onCancel: () => void
+interface TaskListProps {
+  tasks: Task[]
+  onTaskSelect: (task: Task) => void
 }
 
-export const AgentForm: React.FC<AgentFormProps> = ({
-  agent,
-  onSubmit,
-  onCancel,
-}) => {
-  const { register, handleSubmit, formState: { errors } } = useForm<AgentCreate>({
-    defaultValues: agent || {
-      name: "",
-      task_prompt: "",
-      llm_model: "gpt-4o",
-    },
-  })
-
+export const TaskList: React.FC<TaskListProps> = ({ tasks, onTaskSelect }) => {
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      {/* Form implementation */}
-    </form>
+    <div>
+      {tasks.map(task => (
+        <TaskItem 
+          key={task.id} 
+          task={task} 
+          onClick={() => onTaskSelect(task)} 
+        />
+      ))}
+    </div>
   )
 }
 ```
 
-### Code Formatting
+### Testing
 
-- **Backend**: Use `ruff` for linting and formatting
-- **Frontend**: Use `biome` for linting and formatting
+#### Browser Pod Testing
 
-```bash
-# Backend formatting
-cd backend
-uv run ruff format .
-uv run ruff check .
-
-# Frontend formatting
-cd frontend
-npm run lint
-npm run format
-```
-
-## Submitting Changes
-
-### Commit Guidelines
-
-1. **Commit Message Format**:
-   ```
-   type(scope): brief description
-   
-   Detailed explanation of the changes made.
-   
-   Fixes #123
-   ```
-
-2. **Commit Types**:
-   - `feat`: New feature
-   - `fix`: Bug fix
-   - `docs`: Documentation changes
-   - `style`: Code style changes
-   - `refactor`: Code refactoring
-   - `test`: Adding or updating tests
-   - `chore`: Maintenance tasks
-
-3. **Examples**:
-   ```
-   feat(agents): add agent execution history tracking
-   
-   - Add execution_history field to AgentExecution model
-   - Store step-by-step execution logs
-   - Display execution timeline in frontend
-   
-   Fixes #45
-   ```
-
-### Pull Request Process
-
-1. **Ensure your branch is up to date**:
-   ```bash
-   git fetch upstream
-   git rebase upstream/main
-   ```
-
-2. **Run tests and linting**:
-   ```bash
-   # Backend
-   cd backend && bash ./scripts/test.sh
-   
-   # Frontend
-   cd frontend && npm run test && npm run lint
-   ```
-
-3. **Create Pull Request**:
-   - Use a descriptive title
-   - Fill out the PR template
-   - Link related issues
-   - Add screenshots for UI changes
-   - Request review from maintainers
-
-4. **PR Template**:
-   ```markdown
-   ## Description
-   Brief description of changes made.
-   
-   ## Type of Change
-   - [ ] Bug fix
-   - [ ] New feature
-   - [ ] Documentation update
-   - [ ] Performance improvement
-   
-   ## Testing
-   - [ ] Tests pass locally
-   - [ ] Added new tests for changes
-   - [ ] Manual testing completed
-   
-   ## Screenshots (if applicable)
-   
-   ## Related Issues
-   Fixes #123
-   ```
-
-### Review Process
-
-1. **Automated Checks**: All CI checks must pass
-2. **Code Review**: At least one maintainer review required
-3. **Testing**: Ensure all tests pass and new tests are added
-4. **Documentation**: Update documentation if needed
-
-## Deployment
-
-### Local Testing
-
-Test your changes in a production-like environment:
+Run tests for the browser-pod service:
 
 ```bash
-# Build and test with Docker
-docker compose -f docker-compose.yml up -d
-
-# Test the application
-curl http://localhost/api/v1/agents/
+cd browser-pod
+python -m pytest tests/
 ```
 
-### Staging Deployment
+#### Dashboard Testing
 
-Changes are automatically deployed to staging when merged to `main`:
+Run tests for the dashboard:
 
-- **Staging URL**: `https://staging.browser-agents.example.com`
-- **API Docs**: `https://api.staging.browser-agents.example.com/docs`
+```bash
+cd dashboard
+npm test
+```
 
-### Production Deployment
+## 📝 Commit Guidelines
 
-Production deployment happens when a release is published:
+Use conventional commit messages:
 
-- **Production URL**: `https://browser-agents.example.com`
-- **API Docs**: `https://api.browser-agents.example.com/docs`
+- `feat:` - New features
+- `fix:` - Bug fixes
+- `docs:` - Documentation changes
+- `style:` - Code style changes (formatting, etc.)
+- `refactor:` - Code refactoring
+- `test:` - Adding or updating tests
+- `chore:` - Maintenance tasks
 
-## Getting Help
+Examples:
+```
+feat(dashboard): add task execution monitoring
+fix(browser-pod): resolve screenshot capture issue
+docs: update API documentation
+```
 
-### Documentation
+## 🔍 Pull Request Process
 
-- **Development Guide**: [development.md](development.md)
-- **Deployment Guide**: [deployment.md](deployment.md)
-- **API Documentation**: Available at `/docs` endpoint
+1. Ensure your code follows the project's coding standards
+2. Add tests for new functionality
+3. Update documentation if needed
+4. Ensure all tests pass
+5. Create a descriptive pull request with:
+   - Clear title and description
+   - Reference to related issues
+   - Screenshots for UI changes
+   - Testing instructions
 
-### Communication
+## 🐛 Reporting Issues
+
+When reporting bugs or requesting features:
+
+1. Check existing issues first
+2. Use the appropriate issue template
+3. Provide detailed reproduction steps
+4. Include system information and logs
+5. Add screenshots for UI issues
+
+## 💡 Feature Requests
+
+For new feature suggestions:
+
+1. Check if the feature already exists or is planned
+2. Describe the use case and expected behavior
+3. Consider the impact on existing functionality
+4. Be open to discussion and feedback
+
+## 🤝 Code of Conduct
+
+- Be respectful and inclusive
+- Focus on constructive feedback
+- Help others learn and grow
+- Follow the project's guidelines
+
+## 📚 Additional Resources
+
+- [FastAPI Documentation](https://fastapi.tiangolo.com/)
+- [Next.js Documentation](https://nextjs.org/docs)
+- [browser-use Library](https://github.com/browser-use/browser-use)
+
+## 🆘 Getting Help
 
 - **GitHub Issues**: For bug reports and feature requests
 - **GitHub Discussions**: For questions and general discussion
-
-### Common Issues
-
-1. **Database Connection Issues**:
-   - Ensure PostgreSQL is running
-   - Check connection string in `.env`
-   - Verify database exists
-
-2. **Frontend Build Issues**:
-   - Clear `node_modules` and reinstall
-   - Regenerate API client after backend changes
-   - Check TypeScript errors
-
-3. **Agent Execution Issues**:
-   - Verify LLM API keys are correct
-   - Check browser-use library compatibility
-   - Review agent configuration settings
-
-### Debugging Tips
-
-1. **Backend Debugging**:
-   ```python
-   # Add logging
-   import logging
-   logging.basicConfig(level=logging.DEBUG)
-   
-   # Use debugger
-   import pdb; pdb.set_trace()
-   ```
-
-2. **Frontend Debugging**:
-   ```typescript
-   // Console logging
-   console.log('Debug info:', data)
-   
-   // React DevTools
-   // Browser DevTools Network tab
-   ```
-
-## License
-
-By contributing to Browser Agents, you agree that your contributions will be licensed under the Apache License 2.0.
-
-## Recognition
-
-Contributors will be recognized in our:
-- **Contributors list** in the README
-- **Release notes** for significant contributions
-- **Hall of Fame** for outstanding contributions
+- **Code Review**: Maintainers will provide feedback on pull requests
 
 Thank you for contributing to Browser Agents! 🚀
