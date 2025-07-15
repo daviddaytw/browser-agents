@@ -20,7 +20,6 @@ Browser Agents is a web platform that lets you create, deploy, and manage AI-pow
 <td width="50%">
 
 ### 🎨 **No-Code Agent Builder**
-- Visual drag-and-drop interface
 - Natural language task descriptions
 - Pre-built templates for common use cases
 - Smart configuration recommendations
@@ -58,135 +57,6 @@ Browser Agents is a web platform that lets you create, deploy, and manage AI-pow
 - **Parallel Execution**: Run multiple agents simultaneously
 - **Data Export**: CSV, JSON, Excel export formats
 
-## 🏗️ Architecture
-
-```mermaid
-graph TB
-    A[Web Interface] --> B[FastAPI Backend]
-    B --> C[Agent Executor]
-    C --> D[Browser Engine]
-    C --> E[LLM Provider]
-    B --> F[PostgreSQL Database]
-    B --> G[Task Queue]
-    
-    subgraph "AI Models"
-        E --> H[OpenAI GPT-4o]
-        E --> I[Anthropic Claude]
-        E --> J[Google Gemini]
-    end
-    
-    subgraph "Browser Automation"
-        D --> K[Playwright]
-        D --> L[browser-use]
-    end
-```
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-- **Docker & Docker Compose** (recommended)
-- **Python 3.11+** (for local development)
-- **Node.js 18+** (for frontend development)
-- **PostgreSQL 13+** (if not using Docker)
-
-### 🐳 Docker Installation (Recommended)
-
-Get up and running in under 5 minutes:
-
-```bash
-# 1. Clone the repository
-git clone https://github.com/daviddaytw/browser-agents.git
-cd browser-agents
-
-# 2. Configure environment
-cp .env.example .env
-# Edit .env with your settings (see Configuration section below)
-
-# 3. Start all services
-docker compose up -d
-
-# 4. Access the platform
-open http://localhost:5173
-```
-
-### 🛠️ Local Development Setup
-
-For development or customization:
-
-<details>
-<summary>Click to expand local setup instructions</summary>
-
-```bash
-# Backend setup
-cd backend
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-pip install uv
-uv sync
-uv run alembic upgrade head
-uv run uvicorn app.main:app --reload --port 8000
-
-# Frontend setup (new terminal)
-cd frontend
-npm install
-npm run generate-client
-npm run dev
-```
-
-</details>
-
-## API Usage
-
-### Python
-```python
-import requests
-
-# Create agent
-response = requests.post(
-    "http://localhost:8000/api/v1/agents",
-    headers={"Authorization": "Bearer your_api_key"},
-    json={
-        "name": "Data Extractor",
-        "task_prompt": "Extract all product names and prices from {url}",
-        "llm_model": "claude-3-5-sonnet"
-    }
-)
-
-agent_id = response.json()["id"]
-
-# Execute agent
-execution = requests.post(
-    f"http://localhost:8000/api/v1/agents/{agent_id}/execute",
-    headers={"Authorization": "Bearer your_api_key"},
-    json={
-        "parameters": {
-            "url": "https://example-store.com/products"
-        }
-    }
-)
-
-print(f"Execution ID: {execution.json()['id']}")
-```
-
-### JavaScript/Node.js
-
-```javascript
-const axios = require('axios');
-
-const client = axios.create({
-  baseURL: 'http://localhost:8000/api/v1',
-  headers: { 'Authorization': 'Bearer your_api_key' }
-});
-
-// Execute agent
-const execution = await client.post(`/agents/${agentId}/execute`, {
-  parameters: { url: 'https://example.com' }
-});
-
-console.log('Execution started:', execution.data.id);
-```
-
 ## 🛡️ Security & Compliance
 
 - **🔐 Secure Authentication**: JWT-based authentication with API key management
@@ -208,22 +78,6 @@ We welcome contributions from the community! Whether you're fixing bugs, adding 
 3. **Commit** your changes (`git commit -m 'Add amazing feature'`)
 4. **Push** to the branch (`git push origin feature/amazing-feature`)
 5. **Open** a Pull Request
-
-### 📋 Development Setup
-
-```bash
-# Install development dependencies
-cd backend && uv sync --dev
-cd frontend && npm install
-
-# Run tests
-cd backend && uv run pytest
-cd frontend && npm test
-
-# Code formatting
-cd backend && uv run ruff format .
-cd frontend && npm run lint
-```
 
 ### 🎯 Ways to Contribute
 
@@ -281,7 +135,6 @@ Browser Agents is open source software licensed under the [Apache License 2.0](L
 Browser Agents is built on the shoulders of giants. Special thanks to:
 
 - **[browser-use](https://github.com/browser-use/browser-use)** - The core browser automation library that powers our agents
-- **[FastAPI](https://fastapi.tiangolo.com/)** - Modern, fast Python web framework for building APIs
 - **[React](https://reactjs.org/)** - A JavaScript library for building user interfaces
 
 ---
